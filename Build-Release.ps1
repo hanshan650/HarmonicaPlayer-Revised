@@ -9,7 +9,8 @@ try {
     dotnet run --project .\Tests\WindowsSmoke\WindowsSmokeTests.csproj -c Release
     if ($LASTEXITCODE -ne 0) { throw 'Windows UI tests failed. Publishing cancelled.' }
 
-    $version = '0.3.8'
+    $product = 'HarmonicaPlayer-Revised'
+    $version = '1.0'
     $buildStamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
     $outputDir = Join-Path $PSScriptRoot "bin\Release\publish-$version-$buildStamp"
     dotnet publish .\HarmonicaPlayer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $outputDir
@@ -54,7 +55,7 @@ try {
         Write-Warning '未找到简谱文件夹，本次仅打包内置示例谱。'
     }
     $zipSuffix = if ($WithAllScores) { '-full' } else { '' }
-    $zipPath = Join-Path $PSScriptRoot "bin\Release\HarmonicaPlayer-v$version-win-x64$zipSuffix.zip"
+    $zipPath = Join-Path $PSScriptRoot "bin\Release\$product-v$version-win-x64$zipSuffix.zip"
     Compress-Archive -Path (Join-Path $outputDir '*') -DestinationPath $zipPath -Force
     Write-Host "ZIP: $zipPath"
     Write-Host 'Run the new EXE and verify hotkeys before publishing the ZIP.'

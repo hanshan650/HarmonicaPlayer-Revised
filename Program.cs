@@ -17,6 +17,9 @@ public static class Program
 
 public sealed partial class PlayerWindow : Window
 {
+    // 对外版本号：与 HarmonicaPlayer.csproj 的 Version、Build-Release.ps1 的 $version 保持一致。
+    internal const string VersionLabel = "1.0";
+
     private readonly TextBox songTitle = new() { Text = "未命名曲谱" };
     private readonly TextBlock documentInfo = new() { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, Foreground = Muted, FontSize = 12 };
     private readonly TextBlock documentWarning = new() { TextWrapping = TextWrapping.Wrap, Background = Brushes.LemonChiffon };
@@ -40,7 +43,7 @@ public sealed partial class PlayerWindow : Window
     private bool DocumentDirty => cleanDocument != (songTitle.Text, bpm.Text, score.Text, gap.Text);
     private void UpdateDocumentTitle()
     {
-        Title = $"口琴简谱播放器 0.3.8 — {songTitle.Text}{(DocumentDirty ? " *" : "")}";
+        Title = $"口琴简谱播放器 {VersionLabel} — {songTitle.Text}{(DocumentDirty ? " *" : "")}";
         documentInfo.Text = documentPath ?? "尚未保存";
         documentInfo.ToolTip = documentPath;
     }
@@ -162,7 +165,7 @@ public sealed partial class PlayerWindow : Window
         scoreDialogs = dialogs ?? new ScoreDialogs();
         localAudio = audioPlayer ?? new LocalAudioPlayer();
         settingsPath = settingsFile ?? SettingsStore.DefaultPath;
-        Title = "口琴简谱播放器 0.3.8"; Width = 1000; Height = 960; MinWidth = 820; MinHeight = 660;
+        Title = $"口琴简谱播放器 {VersionLabel}"; Width = 1000; Height = 960; MinWidth = 820; MinHeight = 660;
         Background = Page; FontFamily = new FontFamily("Microsoft YaHei UI, Segoe UI"); FontSize = 13.5;
         var panel = new StackPanel { Margin = new Thickness(18) };
         var root = new DockPanel { Margin = new Thickness(8) };

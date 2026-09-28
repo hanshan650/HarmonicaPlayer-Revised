@@ -9,7 +9,7 @@ See the modification list below. All original code and design credit goes to the
 
 - **原作者仓库**：https://github.com/lanselanlanxi-wq/HarmonicaPlayer
 - **修改基线**：上游 `main` 的 `212316e`（版本 **v0.3.3**，2026-09-25）
-- **本仓库**：`HarmonicaPlayer-Revised`（本修改版，作者 hanshan650），在上游 v0.3.3 基础上继续开发，当前版本 **v0.3.8**
+- **本仓库**：`HarmonicaPlayer-Revised`（本修改版，作者 hanshan650），在上游 v0.3.3 基础上继续开发，当前版本 **v1.0**
 - 原作者的最新版本始终以上游仓库为准；本仓库不是官方版本，也不代表原作者的意见。
 
 ## 2. 许可与版权
@@ -67,7 +67,7 @@ See the modification list below. All original code and design credit goes to the
   Windows 冒烟测试新增曲库侧栏、MIDI/JSON 选轨与换轨用例；原有测试按新语义更新。
 - 手册（`使用说明.txt`、`制谱说明.txt`、`ai转谱模板.txt`）按主题重新组织，去掉逐版更新段落与过时引用。
 - `Build-Release.ps1`：发布自包含单文件 EXE，并把 README、本声明、手册、示例与 `简谱` 文件夹一并打包。
-- 程序内部版本号延续上游（当前 0.3.8），便于与上游代码对照；本项目按功能迭代，不另行维护逐版更新日志。
+- 本项目自 v1.0 起独立编号（改动基线为上游 v0.3.3），按功能迭代，不另行维护逐版更新日志。
 
 ### 未改动的部分
 

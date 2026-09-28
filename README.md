@@ -21,7 +21,7 @@
 
 ## 下载与使用
 
-1. **下载**：到 [Releases](https://github.com/hanshan650/HarmonicaPlayer-Revised/releases) 下载 `HarmonicaPlayer-vX.Y.Z-win-x64.zip`。
+1. **下载**：到 [Releases](https://github.com/hanshan650/HarmonicaPlayer-Revised/releases) 下载 `HarmonicaPlayer-Revised-vX.Y-win-x64.zip`。
 2. **解压**：完整解压到一个普通文件夹（不要直接在压缩包里双击 EXE，否则同目录的“简谱”说明会丢）。
    程序是自包含单文件，**不需要安装 .NET，也不联网**。
 3. **双击** `HarmonicaPlayer.exe` 即可运行。首次运行可能提示“未知发布者”（未做代码签名），
@@ -117,5 +117,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Build-Release.ps1
 ```
 
 `Build-Release.ps1` 先跑上面两道测试门禁（任一失败即停止），再发布自包含单文件 EXE 并生成
-`bin\Release\HarmonicaPlayer-v<版本>-win-x64.zip`：包含 EXE、说明、模板、示例与 `简谱` 文件夹内的曲谱。
+`bin\Release\HarmonicaPlayer-Revised-v<版本>-win-x64.zip`：包含 EXE、说明、模板、示例与 `简谱` 文件夹内的曲谱。
 界面测试使用可控音频替身，不发声、不发送游戏按键；也可设 `HARMONICA_UI_SHOT=<目录>` 把界面渲染成 PNG 便于核对。
