@@ -1,0 +1,14 @@
+﻿bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# 第三方商业软件的曲库数据，不随仓库公开（本地仍可用，发布包不受影响）
+简谱/JSON/*.json
+
+# 本机开发记录，作为独立项目不随仓库上传
+archive/
+CHANGELOG.md
+UPDATE-*.md
+VALIDATION-*.md
