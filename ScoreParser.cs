@@ -17,6 +17,9 @@ public static class ScoreParser
 {
     public static List<ScoreNote> Parse(string text)
     {
+        // 半角方括号 [ ] 与全角【】等价：从别处粘来的谱子常用 [3] 写高音。
+        // 都是单字符替换，所以下面报错时的行列位置仍然对得上。
+        text = text.Replace('[', '【').Replace(']', '】');
         var notes = new List<ScoreNote>();
         int octave = 0, opening = -1, sharpAt = -1;
         bool nestedHigh = false, explicitDuration = false;

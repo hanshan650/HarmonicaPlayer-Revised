@@ -19,6 +19,9 @@ Expect(notes[3].Octave == 1 && notes[5].Octave == 1 && notes[6].Octave == 0, "�
 var sharp = ScoreParser.Parse("#6654");
 Expect(sharp[0].Sharp && !sharp[1].Sharp, "#只影响一个音");
 Expect(ScoreParser.Parse("（1）(2)【#6】0").Select(n => n.Octave).SequenceEqual(new[] {-1,-1,1,0}), "音区");
+// 半角方括号与全角【】等价（粘贴别人的谱子时常见）。
+Expect(ScoreParser.Parse("[3] [3#4] [[1]]").Select(n => (n.Degree, n.Octave, n.Sharp))
+    .SequenceEqual(new[] { (3, 1, false), (3, 1, false), (4, 1, true), (1, 2, false) }), "半角方括号等同高音括号");
 Expect(ScoreParser.Parse("565").Select(n=>n.Degree).SequenceEqual(ScoreParser.Parse("5 6 5").Select(n=>n.Degree)), "空格不改变音符");
 foreach (string invalid in new[] {"", "【1", "1】", "（1)", "#", "##1", "#0", "8", "标题1", "【（1）】", "#【1】"})
 {
