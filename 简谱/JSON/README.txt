@@ -1,9 +1,11 @@
 本目录用于放置 JSON 曲谱（软件里“导入 JSON”或左侧曲库都会读取）。
 
-本仓库未附带 GTIartist 曲库的曲谱数据（那属于第三方商业软件的曲库），
-请自行准备 JSON 文件放入本目录，例如：
+文件格式：一个 JSON 对象，含 notes 数组，每条记录为
+  { "pitch": MIDI 音高, "start": 开始时间, "duration": 时长 }
 
-- GTIartist 曲谱：format 为 gtiartist-score-v1，notes 里为 MIDI 音高与秒数
-- 兼容格式：任何含 notes 数组（pitch / start / duration）的 JSON 对象
+- start / duration 单位是秒；若对象里带合理的 bpm（20～300），则把 start/duration 当作拍数处理。
+- 可选字段：title（曲名）、tracks（{ "1": "音轨名" }）、每条记录里的 track（音轨号）。
+- 多音轨曲谱只演奏一条音轨：导入时弹窗选择，默认取编号最小的音轨（第一声部通常是主旋律），
+  导入后也能在“演奏音轨”下拉框里随时换轨。
 
-放入后启动软件即可在左侧曲库看到；多音轨曲谱会弹窗让你选择演奏哪一条音轨。
+放入本目录后启动软件即可在左侧曲库看到。

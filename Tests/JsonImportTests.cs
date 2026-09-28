@@ -1,7 +1,7 @@
 using HarmonicaPlayer;
 
-// Independent checks for the JSON importer (GTIartist song files and any object
-// with a notes array of pitch/start/duration).
+// Independent checks for the JSON importer (any object with a notes array
+// of pitch/start/duration).
 static class JsonImportTests
 {
     public static void Run()
@@ -21,10 +21,9 @@ static class JsonImportTests
             catch (FormatException) { return false; }
         }
 
-        // GTIartist layout: start/duration in seconds, no BPM field.
+        // Common layout: start/duration in seconds, no BPM field.
         const string basic = """
         {
-          "format": "gtiartist-score-v1",
           "title": "测试曲",
           "tracks": { "1": "MIDI Out" },
           "notes": [
@@ -44,7 +43,7 @@ static class JsonImportTests
 
         // The user's file shape: five duplicated tracks, 1/16-beat grid at 121 BPM.
         var duplicate = new System.Text.StringBuilder();
-        duplicate.Append("""{ "format": "gtiartist-score-v1", "title": "多轨", "notes": [""");
+        duplicate.Append("""{ "title": "多轨", "notes": [""");
         for (int track = 2; track <= 4; track++)
             duplicate.Append($$"""{ "pitch": 64, "start": 0.0, "duration": 0.247934, "track": {{track}} },""");
         duplicate.Append("""{ "pitch": 52, "start": 0.0, "duration": 0.743802, "track": 2 } ] }""");
@@ -56,7 +55,7 @@ static class JsonImportTests
         // Multi-track scores are arrangements: only the track with the most notes plays.
         const string chordJson = """
         {
-          "format": "gtiartist-score-v1", "title": "和弦",
+          "title": "和弦",
           "notes": [
             { "pitch": 60, "start": 0.0, "duration": 0.5, "track": 1 },
             { "pitch": 67, "start": 0.0, "duration": 0.5, "track": 2 },
@@ -166,7 +165,7 @@ static class JsonImportTests
         Check(beatsMode.Bpm == 120 && Beats(beatsMode.Body).SequenceEqual(new[] { 1.0, 0.5 }), "按拍数解析");
         Check(beatsMode.Warnings.Any(w => w.Contains("拍数")), "提示按拍数处理");
 
-        // Unknown formats are still read when the notes array matches, with a warning.
+        // 任意 format 都不影响解析：仍按 notes 字段读取（含字符串数值）。
         const string unknown = """
         { "format": "other-v1", "title": "别的格式", "notes": [
           { "pitch": "60", "start": "0", "duration": "1" } ] }
@@ -174,12 +173,11 @@ static class JsonImportTests
         var unknownResult = JsonImporter.Import(unknown, null);
         Check(unknownResult.Title == "别的格式" && Pitches(unknownResult.Body).SequenceEqual(new[] { 60 }),
             "未识别 format 仍按字段解析（含字符串数值）");
-        Check(unknownResult.Warnings.Any(w => w.Contains("未识别")), "提示未识别 format");
 
         // Missing or broken content is rejected with a readable reason.
         Check(Throws(() => JsonImporter.Import("{", "bad")), "拒绝非法 JSON");
         Check(Throws(() => JsonImporter.Import("[1,2,3]", "bad")), "拒绝非对象根节点");
-        Check(Throws(() => JsonImporter.Import("""{ "format": "gtiartist-score-v1" }""", "bad")), "缺少 notes 时报错");
+        Check(Throws(() => JsonImporter.Import("""{ "title": "无音符" }""", "bad")), "缺少 notes 时报错");
         Check(Throws(() => JsonImporter.Import("""{ "notes": [] }""", "bad")), "notes 为空时报错");
         Check(Throws(() => JsonImporter.Import("""{ "notes": [ { "pitch": 60 } ] }""", "bad")), "缺少字段时报错");
         var skipped = JsonImporter.Import("""

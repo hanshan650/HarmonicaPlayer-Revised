@@ -9,7 +9,7 @@ See the modification list below. All original code and design credit goes to the
 
 - **原作者仓库**：https://github.com/lanselanlanxi-wq/HarmonicaPlayer
 - **修改基线**：上游 `main` 的 `212316e`（版本 **v0.3.3**，2026-09-25）
-- **本仓库**：`HarmonicaPlayer-Revised`（本修改版，作者 hanshan650），在上游 v0.3.3 基础上继续开发，当前版本 **v1.0**
+- **本仓库**：`HarmonicaPlayer-Revised`（本修改版，作者 hanshan650），在上游 v0.3.3 基础上继续开发，当前版本 **v1.1**
 - 原作者的最新版本始终以上游仓库为准；本仓库不是官方版本，也不代表原作者的意见。
 
 ## 2. 许可与版权
@@ -25,9 +25,8 @@ See the modification list below. All original code and design credit goes to the
 
 ### 本仓库**没有**包含的内容
 
-- **GTIartist 曲库的 62 首 JSON 曲谱**：来自第三方商业软件 GTIartist 的曲库数据，
-  出于版权考虑未纳入本仓库（`.gitignore` 已忽略 `简谱/JSON/*.json`）。
-  需要时请自行准备 JSON 曲谱并放入 `简谱\JSON\`，软件即可读取。
+- **第三方商业软件随附的曲库 JSON**：属于他人作品/数据的转谱，出于版权考虑未纳入本仓库
+  （`.gitignore` 已忽略 `简谱/JSON/*.json`）。需要时请自行准备 JSON 曲谱并放入 `简谱\JSON\`，软件即可读取。
 
 ## 3. 本项目的修改内容
 
@@ -38,8 +37,8 @@ See the modification list below. All original code and design credit goes to the
 - **导入 MIDI**（`MidiImporter.cs`）：读取标准 MIDI（Format 0/1，.mid/.midi）转成单音简谱正文；
   忽略通道 10 打击乐；先整体八度移调，仍超范围的个别音再折回八度；速度取第一个速度事件（20～300）；
   最短音过短时自动把速度降到可演奏值并在提示区说明。
-- **导入 JSON**（`JsonImporter.cs`）：支持 GTIartist 曲谱 `gtiartist-score-v1`（pitch 为 MIDI 音高，
-  start/duration 为秒），也兼容任何含 `notes` 数组的 JSON 对象。
+- **导入 JSON**（`JsonImporter.cs`）：读取带 notes 数组的 JSON（pitch 为 MIDI 音高，
+  start/duration 为秒；带 bpm 字段时按拍数处理），多音轨可自选一条。
 - **共享转换模块**（`ScoreText.cs`）：MIDI 与 JSON 导入共用同一套音域适配、时值量化与简谱输出逻辑。
 - **音轨选择与换轨**（`TrackDialog.cs`、`ScoreDialogs.cs`、`Program.cs`）：多音轨曲谱导入时弹窗列出每一条音轨
   （编号、名称、音数、音域、平均音长、同时发声音数），导入后可用“演奏音轨”下拉框随时换轨，不必重新导入文件。
@@ -59,7 +58,7 @@ See the modification list below. All original code and design credit goes to the
   推断不出时按中性 120 BPM 显示，并说明速度只是标签、演奏仍按原文件的绝对时间对齐（`JsonImporter.cs`）。
 - **长音下方后起的旋律音不再被吞掉**：改为“截断长音、保留后起的音”，原实现会丢掉这些音（`ScoreText.cs`）。
 - **最短音校验由抛异常改为返回报告**（`PlaybackValidation.CheckGap`：`TooShort`、`FirstShortPosition`、`ShortestMs`）。
-- **默认选轨**：JSON 默认编号最小的音轨（GTIartist 第一声部通常就是主旋律）；MIDI 默认音符最多的音轨。
+- **默认选轨**：JSON 默认编号最小的音轨（第一声部通常就是主旋律）；MIDI 默认音符最多的音轨。
 
 ### 工程与文档
 

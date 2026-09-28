@@ -14,7 +14,7 @@
 - **界面**：左右两栏 + 功能卡片（演奏／曲谱文件／本机试听／曲谱编辑／快捷键与设置）；开始键主色按钮、停止键红色，窗口可自由缩放，长路径省略号 + 悬停提示。
 
 - 曲谱：`HarmonicaPlayer/1` TXT（`@format/@title/@bpm/@gap` 文件头），兼容旧纯音符 TXT 与“歌名 bpm100.txt”命名。
-- 导入：MIDI（Format 0/1，.mid/.midi）、JSON（GTIartist `gtiartist-score-v1` 或任何含 `notes` 数组的对象）。
+- 导入：MIDI（Format 0/1，.mid/.midi）、JSON（任何含 `notes` 数组的对象：pitch / start / duration，可选 bpm / title / track）。
 - 试听：内置 Hohner Special 20 真实口琴采样；从头或从光标试听、当前音符高亮、音量 0～100%（默认 60%）。
 - 导出：标准 MIDI Format 0、单轨、9600 PPQ、GM 口琴音色，不含采样音频。
 - 演奏：3 秒倒计时后向目标窗口发送键鼠；默认开始 F6、停止 F8，可自定义。
@@ -48,7 +48,7 @@
 简谱\
   TXT\    *.txt    软件保存的 HarmonicaPlayer/1 曲谱
   MIDI\   *.mid    导出或收集的 MIDI
-  JSON\   *.json   GTIartist 等 JSON 曲谱
+  JSON\   *.json   JSON 曲谱（notes 数组）
 ```
 
 导入与导出对话框会自动定位到对应分类（子目录不存在时退回 `简谱`，再退回 EXE 目录），省去每次手动找路径。

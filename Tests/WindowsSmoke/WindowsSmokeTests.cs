@@ -517,7 +517,7 @@ public static class WindowsSmokeTests
         try
         {
             await File.WriteAllTextAsync(json, """
-            { "format": "gtiartist-score-v1", "title": "JSON曲", "notes": [
+            { "title": "JSON曲", "notes": [
               { "pitch": 60, "start": 0.0, "duration": 0.5, "track": 1 },
               { "pitch": 72, "start": 0.5, "duration": 0.5, "track": 1 } ] }
             """);

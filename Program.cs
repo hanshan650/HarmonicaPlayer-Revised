@@ -18,7 +18,7 @@ public static class Program
 public sealed partial class PlayerWindow : Window
 {
     // 对外版本号：与 HarmonicaPlayer.csproj 的 Version、Build-Release.ps1 的 $version 保持一致。
-    internal const string VersionLabel = "1.0";
+    internal const string VersionLabel = "1.1";
 
     private readonly TextBox songTitle = new() { Text = "未命名曲谱" };
     private readonly TextBlock documentInfo = new() { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, Foreground = Muted, FontSize = 12 };

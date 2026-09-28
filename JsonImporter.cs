@@ -18,18 +18,16 @@ public sealed record JsonTrack(string Label, string Name, int Notes, int LowestP
     }
 }
 
-// Reads a GTIartist score JSON (format gtiartist-score-v1: notes carry a MIDI pitch
-// plus start and duration in seconds) and produces single-voice score text. Any
-// object with a notes array using pitch/start/duration is accepted as well.
+// Reads a score JSON (notes carry a MIDI pitch plus start and duration in seconds) and
+// produces single-voice score text: any object with a notes array using
+// pitch/start/duration is accepted.
 // Multi-track files are arrangements (melody / accompaniment / separate players): only one
 // track is played - the one the user picks, defaulting to the lowest-numbered track, which
-// GTIartist treats as the first part and is normally the melody. The tempo is a label only:
-// playback keeps the file's absolute times, so a note too short to hold is reported instead
-// of slowing the whole piece down.
+// is normally the melody. The tempo is a label only: playback keeps the file's absolute
+// times, so a note too short to hold is reported instead of slowing the whole piece down.
 public static class JsonImporter
 {
     public const int MaxBytes = 16 * 1024 * 1024;
-    private const string GtiFormat = "gtiartist-score-v1";
     // 0.1ms: values produced from a musical grid survive this tolerance.
     private const double UnitTolerance = 1e-4;
     // Beat subdivisions a grid step may represent; all divide the 1/48-beat grid.
@@ -65,9 +63,7 @@ public static class JsonImporter
         {
             var root = RequireRoot(document);
             var warnings = new List<string>();
-            string format = ReadString(root, "format") ?? "";
-            if (format.Length > 0 && !string.Equals(format, GtiFormat, StringComparison.OrdinalIgnoreCase))
-                warnings.Add($"未识别的 format“{format}”，已按 notes 里的 pitch/start/duration 字段解析。");
+            // format 字段仅供参考：解析一律以 notes 里的 pitch/start/duration 为准。
             var buckets = Collect(root, out int skipped);
             if (skipped > 0) warnings.Add($"已忽略{skipped}条缺少字段、时值为零或音高非法的记录。");
 
@@ -178,7 +174,7 @@ public static class JsonImporter
         return buckets;
     }
 
-    // 默认优先顺序：编号最小的音轨在前（GTIartist 把它当作第一声部，通常就是主旋律），
+    // 默认优先顺序：编号最小的音轨在前（第一声部通常就是主旋律），
     // 编号相同或无编号时音数多的在前，弹窗里第一条就是默认选中的那一条。
     private static List<JsonTrack> OrderTracks(JsonElement root,
         Dictionary<string, List<(double Start, double End, int Pitch)>> buckets)
@@ -293,7 +289,7 @@ public static class JsonImporter
         _ => "",
     };
 
-    // GTIartist 曲谱在顶层 tracks 里给出音轨名：{ "1": "Violin" }。
+    // 曲谱可以在顶层 tracks 里给出音轨名：{ "1": "Violin" }。
     private static string TrackName(JsonElement root, string label)
     {
         if (label.Length > 0 && root.TryGetProperty("tracks", out var map) && map.ValueKind == JsonValueKind.Object &&
