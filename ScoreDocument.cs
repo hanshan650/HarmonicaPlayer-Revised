@@ -44,7 +44,39 @@ public static class ScoreDocumentReader
             if (bytes.Length + count > MaxBytes) throw new IOException("文件不得超过1MB。");
             bytes.Write(buffer, 0, count);
         }
-        return Parse(new UTF8Encoding(false, true).GetString(bytes.ToArray()), path, fallbackBpm);
+        var (text, encodingWarning) = Decode(bytes.ToArray());
+        var result = Parse(text, path, fallbackBpm);
+        return encodingWarning == null
+            ? result
+            : result with { Warnings = new[] { encodingWarning }.Concat(result.Warnings).ToArray() };
+    }
+
+    // 旧简谱常以 GBK（记事本里的“ANSI”）保存；.NET 默认不带 936 代码页，需要先注册一次。
+    private static readonly Lazy<Encoding?> LegacyEncoding = new(() =>
+    {
+        try
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            return Encoding.GetEncoding(936, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+        }
+        catch (Exception) { return null; }
+    });
+
+    // 先按严格 UTF-8 解，失败再试 GBK；两者都不成立时给出可读的错误，而不是底层解码异常。
+    private static (string Text, string? Warning) Decode(byte[] bytes)
+    {
+        try { return (new UTF8Encoding(false, true).GetString(bytes), null); }
+        catch (DecoderFallbackException) { }
+        if (LegacyEncoding.Value is { } legacy)
+        {
+            try
+            {
+                return (legacy.GetString(bytes),
+                    "文件不是 UTF-8 编码（像是记事本保存的“ANSI/GBK”），已按 GBK 读取；建议另存为 UTF-8，避免标题显示乱码。");
+            }
+            catch (DecoderFallbackException) { }
+        }
+        throw new FormatException("文件不是有效的 UTF-8，也无法按 GBK 读取；请在记事本里“另存为”并选择 UTF-8 后重试。");
     }
 
     public static ScoreReadResult Parse(string text, string? path, int fallbackBpm)

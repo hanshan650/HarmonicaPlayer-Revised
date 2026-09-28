@@ -82,8 +82,17 @@ static class DocumentTests
             Check(!Directory.GetFiles(directory, "*.tmp").Any(), "failure cleans temp");
             string invalid = Path.Combine(directory, "invalid.txt");
             await File.WriteAllBytesAsync(invalid, [0xFF, 0xFE, 0xFF]);
-            try { await ScoreDocumentReader.ReadAsync(invalid, 120); throw new Exception("invalid UTF8 accepted"); }
-            catch (DecoderFallbackException) { count++; }
+            try { await ScoreDocumentReader.ReadAsync(invalid, 120); throw new Exception("invalid bytes accepted"); }
+            catch (FormatException e) when (e.Message.Contains("UTF-8")) { count++; }
+            // 旧谱常用记事本“ANSI/GBK”保存：仍能导入，并给出提示。
+            string legacyGbk = Path.Combine(directory, "legacy-gbk.txt");
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            await File.WriteAllBytesAsync(legacyGbk, Encoding.GetEncoding(936).GetBytes(
+                "@format=HarmonicaPlayer/1\n@title=中文曲名\n@bpm=120\n@gap=20\n\n1 2_ 3_ |\n"));
+            var legacyRead = await ScoreDocumentReader.ReadAsync(legacyGbk, 120);
+            Check(legacyRead.Document.Title == "中文曲名" && legacyRead.Document.Bpm == 120
+                && legacyRead.Document.ScoreText.Contains("1 2_ 3_"), "GBK 旧谱仍可导入");
+            Check(legacyRead.Warnings.Any(w => w.Contains("GBK")), "提示文件不是 UTF-8");
         }
         finally { foreach (string file in Directory.GetFiles(directory)) File.Delete(file); Directory.Delete(directory); }
         Console.WriteLine($"PASS v0.2.1: {count} document and validation tests");
