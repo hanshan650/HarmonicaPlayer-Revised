@@ -397,8 +397,19 @@ public static class WindowsSmokeTests
             list.SelectedIndex = 0;
             await WaitUntil(() => Field<TextBox>(window, "songTitle").Text == "库测试 bpm100", "library import");
             if (Field<TextBox>(window, "bpm").Text != "100") throw new Exception("Library import ignored the file name BPM");
+            // 分隔条：曲库栏宽度可以左右拖动调整。
+            var splitter = Descendants(window).OfType<GridSplitter>().Single();
+            var body = (Grid)System.Windows.Media.VisualTreeHelper.GetParent(splitter)!;
+            if (body.ColumnDefinitions.Count != 3 || Grid.GetColumn(splitter) != 1 ||
+                splitter.ResizeDirection != GridResizeDirection.Columns ||
+                splitter.ResizeBehavior != GridResizeBehavior.PreviousAndNext)
+                throw new Exception("Sidebar splitter is not configured for column resizing");
+            body.ColumnDefinitions[0].Width = new GridLength(420);
+            window.UpdateLayout();
+            if (Math.Abs(body.ColumnDefinitions[0].ActualWidth - 420) > 2)
+                throw new Exception($"Sidebar column did not resize (width {body.ColumnDefinitions[0].ActualWidth})");
             WriteUiShot(window, "library");
-            Console.WriteLine("PASS library UI: scan, filter, click to import");
+            Console.WriteLine("PASS library UI: scan, filter, click to import, drag-resizable sidebar");
         }
         finally
         {

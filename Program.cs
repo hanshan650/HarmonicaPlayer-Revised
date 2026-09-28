@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -18,7 +19,7 @@ public static class Program
 public sealed partial class PlayerWindow : Window
 {
     // 对外版本号：与 HarmonicaPlayer.csproj 的 Version、Build-Release.ps1 的 $version 保持一致。
-    internal const string VersionLabel = "1.1";
+    internal const string VersionLabel = "1.2";
 
     private readonly TextBox songTitle = new() { Text = "未命名曲谱" };
     private readonly TextBlock documentInfo = new() { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, Foreground = Muted, FontSize = 12 };
@@ -193,14 +194,23 @@ public sealed partial class PlayerWindow : Window
         status.Margin = new Thickness(12, 4, 12, 8);
         fixedHeader.Children.Add(status);
         DockPanel.SetDock(fixedHeader, Dock.Top); root.Children.Add(fixedHeader);
-        // 左侧曲库 + 右侧编辑器两栏。
+        // 左侧曲库 + 分隔条 + 右侧编辑器：拖动分隔条可以左右调整曲库宽度。
         var body = new Grid();
-        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(276) });
-        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(276), MinWidth = 160 });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 360 });
         var library = BuildLibrary();
         Grid.SetColumn(library, 0); body.Children.Add(library);
+        var splitter = new GridSplitter
+        {
+            Width = 6, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Stretch,
+            ResizeBehavior = GridResizeBehavior.PreviousAndNext, ResizeDirection = GridResizeDirection.Columns,
+            Background = Line, ShowsPreview = false, Cursor = Cursors.SizeWE,
+            ToolTip = "左右拖动可以调整曲库栏的宽度"
+        };
+        Grid.SetColumn(splitter, 1); body.Children.Add(splitter);
         var editorScroll = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Padding = new Thickness(0, 0, 6, 0) };
-        Grid.SetColumn(editorScroll, 1); body.Children.Add(editorScroll);
+        Grid.SetColumn(editorScroll, 2); body.Children.Add(editorScroll);
         root.Children.Add(body); Content = root;
         panel.Children.Add(new TextBlock { Text = "单音简谱播放器", FontSize = 20, FontWeight = FontWeights.SemiBold });
         panel.Children.Add(new TextBlock
@@ -583,7 +593,7 @@ public sealed partial class PlayerWindow : Window
         return new Border
         {
             Background = CardFill, BorderBrush = Line, BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(8), Padding = new Thickness(12), Margin = new Thickness(0, 0, 14, 0), Child = grid
+            CornerRadius = new CornerRadius(8), Padding = new Thickness(12), Margin = new Thickness(0, 0, 8, 0), Child = grid
         };
     }
 

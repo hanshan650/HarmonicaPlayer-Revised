@@ -1,0 +1,3628 @@
+{
+  "format": "gtiartist-score-v1",
+  "title": "幼女幻奏",
+  "tracks": {
+    "0": "Lead",
+    "1": "Piccolo"
+  },
+  "notes": [
+    {
+      "pitch": 73,
+      "start": 0.14858333333333285,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 0.5079583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 0.6485833333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 0.6485833333333328,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 1.0235833333333328,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 1.1485833333333328,
+      "duration": 0.45675000000000043,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 1.6173333333333328,
+      "duration": 0.25,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 1.6485833333333328,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 1.9767083333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 2.148583333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 83,
+      "start": 2.507958333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 2.648583333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 2.648583333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 3.007958333333333,
+      "duration": 0.07291666666666696,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 3.148583333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 3.461083333333333,
+      "duration": 0.05050000000000043,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 3.523583333333333,
+      "duration": 0.11300000000000043,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 3.648583333333333,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 3.648583333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 3.976708333333333,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 4.148583333333333,
+      "duration": 0.09374999999999911,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 4.476708333333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 4.627749999999998,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 4.648583333333332,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 4.966291666666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 5.143375,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 5.476708333333334,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 5.648583333333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 5.648583333333334,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 5.981916666666668,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 6.148583333333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 6.476708333333334,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 6.632958333333334,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 6.632958333333334,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 6.981916666666668,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 7.148583333333334,
+      "duration": 0.5,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 7.62775,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 7.987125,
+      "duration": 0.08854166666666607,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 8.148583333333331,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 8.487124999999999,
+      "duration": 0.08333333333333393,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 8.648583333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 8.648583333333331,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 8.987124999999999,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 9.148583333333331,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 9.617333333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 9.617333333333331,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 9.971499999999999,
+      "duration": 0.06770833333333393,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 10.148583333333331,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 83,
+      "start": 10.476708333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 10.612124999999999,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 10.632958333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 10.976708333333331,
+      "duration": 0.07291666666666607,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 11.117333333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 11.429833333333331,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 11.492333333333331,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 11.617333333333331,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 11.627749999999999,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 11.992333333333331,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 12.148583333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 12.497541666666663,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 12.627749999999995,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 12.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 12.976708333333328,
+      "duration": 0.08333333333333215,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 13.132958333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 13.48191666666666,
+      "duration": 0.08854166666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 13.617333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 13.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 13.99754166666666,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 14.148583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 14.148583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 78,
+      "start": 14.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 14.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 78,
+      "start": 15.148583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 15.148583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 16.148583333333328,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 16.502749999999995,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 16.507958333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 16.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 16.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 17.007958333333328,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 17.148583333333328,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 17.461083333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 17.617333333333328,
+      "duration": 0.25,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 17.617333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 18.007958333333328,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 18.148583333333328,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 83,
+      "start": 18.492333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 18.492333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 18.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 18.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 18.976708333333328,
+      "duration": 0.07291666666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 19.148583333333328,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 19.461083333333328,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 19.492333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 19.523583333333328,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 19.648583333333328,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 19.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 20.002749999999995,
+      "duration": 0.05208333333333215,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 20.148583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 20.492333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 66,
+      "start": 20.502749999999995,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 20.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 20.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 20.96629166666666,
+      "duration": 0.06770833333333215,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 21.148583333333324,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 21.461083333333324,
+      "duration": 0.10416666666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 21.461083333333324,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 21.617333333333324,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 21.648583333333324,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 21.961083333333324,
+      "duration": 0.08854166666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 22.127749999999992,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 22.445458333333324,
+      "duration": 0.10416666666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 22.445458333333324,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 22.612124999999992,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 22.612124999999992,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 22.940249999999992,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 23.127749999999992,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 23.440249999999992,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 23.627749999999992,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 23.627749999999992,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 23.987124999999992,
+      "duration": 0.08854166666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 24.164208333333328,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 24.492333333333328,
+      "duration": 0.0833333333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 66,
+      "start": 24.502749999999995,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 66,
+      "start": 24.648583333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 24.664208333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 24.987124999999995,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 25.148583333333328,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 25.461083333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 25.617333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 25.617333333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 71,
+      "start": 25.976708333333328,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 26.143374999999995,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 26.445458333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 83,
+      "start": 26.461083333333328,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 26.612124999999995,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 26.632958333333328,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 26.987124999999995,
+      "duration": 0.07291666666666785,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 27.14858333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 81,
+      "start": 27.42983333333333,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 27.42983333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 27.49233333333333,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 27.61733333333333,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 27.61733333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 27.966291666666663,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 28.138166666666663,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 28.4715,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 66,
+      "start": 28.50275,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 28.62775,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 66,
+      "start": 28.648583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 28.961083333333335,
+      "duration": 0.0833333333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 29.132958333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 29.445458333333335,
+      "duration": 0.0885416666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 29.461083333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 29.617333333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 29.632958333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 29.9715,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 30.148583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 30.148583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 78,
+      "start": 30.648583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 30.648583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 78,
+      "start": 31.148583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 31.148583333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 32.148583333333335,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 32.148583333333335,
+      "duration": 3.890624999999993,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 32.31525,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 32.48191666666666,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 32.64858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 33.02358333333333,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 33.14858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 33.47670833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 33.64858333333333,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 34.14858333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 34.46108333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 34.61733333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 34.97670833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 35.14858333333333,
+      "duration": 0.65625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 35.94545833333333,
+      "duration": 0.020000000000003126,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 35.97670833333333,
+      "duration": 0.08174999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 36.07045833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 36.14858333333333,
+      "duration": 3.890625000000014,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 36.30483333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 36.44545833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 36.62254166666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 36.955875,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 37.112125,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 37.455875,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 37.648583333333335,
+      "duration": 0.3854166666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 38.12775,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 38.46629166666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 38.62775,
+      "duration": 0.1302083333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 38.955875000000006,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 39.112125000000006,
+      "duration": 0.6770833333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 81,
+      "start": 39.88295833333334,
+      "duration": 0.020000000000003126,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 84,
+      "start": 39.91420833333334,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 40.14858333333334,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 40.14858333333334,
+      "duration": 3.890624999999986,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 40.315250000000006,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 40.48191666666667,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 40.648583333333335,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 40.94025,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 41.112125,
+      "duration": 0.0989583333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 41.455875,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 41.648583333333335,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 42.148583333333335,
+      "duration": 0.109375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 74,
+      "start": 42.487125,
+      "duration": 0.0729166666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 42.64858333333333,
+      "duration": 0.1302083333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 42.987125,
+      "duration": 0.0729166666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 43.14858333333333,
+      "duration": 0.8489583333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 44.14858333333333,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 44.14858333333333,
+      "duration": 1.8958333333333357,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 44.31524999999999,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 44.481916666666656,
+      "duration": 0.15466666666666384,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 44.64858333333332,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 45.02358333333332,
+      "duration": 0.11300000000000665,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 45.14858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 45.47670833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 45.64858333333333,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 46.14858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 61,
+      "start": 46.14858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 46.64858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 61,
+      "start": 46.64858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 47.14858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 63,
+      "start": 47.14858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 47.64858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 63,
+      "start": 47.64858333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 49.13295833333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 49.49233333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 65,
+      "start": 49.61733333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 49.63295833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 50.00795833333333,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 50.13295833333333,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 50.60170833333333,
+      "duration": 0.25,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 50.61733333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 50.96108333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 51.13295833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 82,
+      "start": 51.49233333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 51.61733333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 51.63295833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 51.99233333333333,
+      "duration": 0.0729166666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 52.13295833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 52.44545833333333,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 52.50795833333333,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 52.61733333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 52.63295833333333,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 52.96108333333333,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 53.13295833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 53.46108333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 53.61212499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 65,
+      "start": 53.61733333333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 53.95066666666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 54.12775,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 54.461083333333335,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 54.617333333333335,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 54.632958333333335,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 54.96629166666667,
+      "duration": 0.0677083333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 55.13295833333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 55.46108333333334,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 55.596500000000006,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 55.61733333333334,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 55.96629166666667,
+      "duration": 0.0677083333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 56.13295833333334,
+      "duration": 0.5,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 56.59129166666668,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 56.97150000000001,
+      "duration": 0.0885416666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 57.13295833333334,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 57.471500000000006,
+      "duration": 0.0833333333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 65,
+      "start": 57.61733333333334,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 57.63295833333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 57.971500000000006,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 58.13295833333334,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 58.580875000000006,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 67,
+      "start": 58.60170833333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 58.955875000000006,
+      "duration": 0.0677083333333357,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 59.13295833333334,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 82,
+      "start": 59.46108333333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 59.57566666666668,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 59.61733333333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 59.96108333333334,
+      "duration": 0.0729166666666643,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 60.10170833333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 60.41420833333334,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 60.47670833333334,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 60.59129166666667,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 60.60170833333334,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 60.97670833333334,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 61.13295833333334,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 61.48191666666667,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 61.612125,
+      "duration": 0.09374999999998579,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 65,
+      "start": 61.61733333333333,
+      "duration": 0.08854166666665719,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 61.96108333333331,
+      "duration": 0.0833333333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 62.11733333333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 62.46629166666664,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 62.580874999999985,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 62.63295833333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 62.98191666666664,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 63.11733333333331,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 63.13295833333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 63.61733333333331,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 63.63295833333331,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 64.11733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 64.13295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 65.13295833333332,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 65,
+      "start": 65.46629166666665,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 65.49233333333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 65,
+      "start": 65.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 65.63295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 65.99233333333332,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 66.13295833333332,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 66.42462499999999,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 66.58087499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 67,
+      "start": 66.60170833333332,
+      "duration": 0.25,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 70,
+      "start": 66.99233333333332,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 67.13295833333332,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 67.45587499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 82,
+      "start": 67.47670833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 67.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 67.63295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 67.96108333333332,
+      "duration": 0.0729166666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 68.13295833333332,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 68.44545833333332,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 68.45587499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 68.50795833333332,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 68.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 68.63295833333332,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 68.98712499999999,
+      "duration": 0.052083333333328596,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 69.13295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 65,
+      "start": 69.46629166666665,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 69.47670833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 65,
+      "start": 69.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 69.63295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 69.95066666666665,
+      "duration": 0.0677083333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 70.1329583333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 67,
+      "start": 70.42462499999998,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 70.4454583333333,
+      "duration": 0.1041666666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 70.58087499999998,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 70.6329583333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 70.9454583333333,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 71.11212499999998,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 71.40899999999998,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 70,
+      "start": 71.4298333333333,
+      "duration": 0.1041666666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 71.57566666666665,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 71.59649999999998,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 71.92462499999998,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 72.11212499999998,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 72.40899999999998,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 72.59129166666665,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 72.61212499999998,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 72.97149999999998,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 73.14858333333332,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 65,
+      "start": 73.46629166666665,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 73.47670833333332,
+      "duration": 0.0833333333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 65,
+      "start": 73.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 73.64858333333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 73.97149999999999,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 74.13295833333332,
+      "duration": 0.45674999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 74.42462499999999,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 74.58087499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 67,
+      "start": 74.60170833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 70,
+      "start": 74.96108333333332,
+      "duration": 0.078125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 75.12774999999999,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 75.40899999999999,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 82,
+      "start": 75.44545833333332,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 75.57566666666665,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 80,
+      "start": 75.61733333333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 75.97149999999999,
+      "duration": 0.0729166666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 76.13295833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 68,
+      "start": 76.39858333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 76.41420833333333,
+      "duration": 0.050499999999999545,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 76.47670833333333,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 76.580875,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 76.60170833333333,
+      "duration": 0.15625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 76.95066666666666,
+      "duration": 0.0833333333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 77.12254166666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 77.45587499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 65,
+      "start": 77.46629166666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 77.61212499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 65,
+      "start": 77.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 77.94545833333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 78.11733333333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 67,
+      "start": 78.42462499999999,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 78.42983333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 78.58087499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 78.61733333333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 78.95587499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 69,
+      "start": 79.11733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 79.13295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 79.61733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 79.63295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 69,
+      "start": 80.11733333333332,
+      "duration": 0.0885416666666714,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 77,
+      "start": 80.13295833333332,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 67,
+      "start": 81.11733333333332,
+      "duration": 3.890625000000014,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 81.13295833333332,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 81.29962499999999,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 81.46629166666666,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 81.63295833333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 74,
+      "start": 82.00795833333333,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 82.13295833333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 82.46108333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 82.63295833333333,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 83.13295833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 83.44545833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 83.60170833333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 74,
+      "start": 83.96108333333333,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 84.13295833333333,
+      "duration": 0.65625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 84.92983333333333,
+      "duration": 0.01999999999999602,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 77,
+      "start": 84.96108333333333,
+      "duration": 0.08174999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 85.05483333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 71,
+      "start": 85.11733333333333,
+      "duration": 3.890624999999986,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 85.28920833333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 85.42983333333333,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 85.60691666666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 78,
+      "start": 85.94024999999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 86.09649999999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 79,
+      "start": 86.44024999999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 86.63295833333332,
+      "duration": 0.3854166666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 87.11212499999999,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 87.45066666666666,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 78,
+      "start": 87.61212499999999,
+      "duration": 0.1302083333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 78,
+      "start": 87.94024999999999,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 79,
+      "start": 88.09649999999999,
+      "duration": 0.6770833333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 80,
+      "start": 88.86733333333332,
+      "duration": 0.01999999999999602,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 83,
+      "start": 88.89858333333332,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 68,
+      "start": 89.11733333333332,
+      "duration": 3.8906250000000426,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 89.13295833333332,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 89.29962499999999,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 89.46629166666666,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 89.63295833333333,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 89.924625,
+      "duration": 0.09375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 90.0965,
+      "duration": 0.0989583333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 76,
+      "start": 90.44025,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 90.63295833333333,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 73,
+      "start": 91.13295833333333,
+      "duration": 0.109375,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 73,
+      "start": 91.4715,
+      "duration": 0.0729166666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 91.63295833333335,
+      "duration": 0.1302083333333286,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 91.9715,
+      "duration": 0.0729166666666714,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 76,
+      "start": 92.13295833333335,
+      "duration": 0.8489583333333428,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 67,
+      "start": 93.11733333333336,
+      "duration": 1.8906250000000142,
+      "velocity": 30,
+      "track": 1,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 93.13295833333336,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 93.29962500000003,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 72,
+      "start": 93.4662916666667,
+      "duration": 0.15466666666667095,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 93.63295833333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 74,
+      "start": 94.00795833333338,
+      "duration": 0.11299999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 75,
+      "start": 94.13295833333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 75,
+      "start": 94.46108333333338,
+      "duration": 0.0625,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 74,
+      "start": 94.63295833333338,
+      "duration": 0.48799999999999955,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": false
+    },
+    {
+      "pitch": 60,
+      "start": 95.11733333333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 95.13295833333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 60,
+      "start": 95.61733333333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 72,
+      "start": 95.63295833333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 62,
+      "start": 96.11733333333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 74,
+      "start": 96.13295833333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    },
+    {
+      "pitch": 62,
+      "start": 96.61733333333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 1,
+      "phrase_end": true
+    },
+    {
+      "pitch": 74,
+      "start": 96.63295833333338,
+      "duration": 0.125,
+      "velocity": 100,
+      "track": 0,
+      "phrase_end": true
+    }
+  ],
+  "arranged": true,
+  "duration": 96.75795833333338
+}
