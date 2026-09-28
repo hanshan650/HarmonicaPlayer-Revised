@@ -53,6 +53,8 @@ public sealed partial class PlayerWindow : Window
     private readonly CheckBox dry = new() { Content = "仅日志测试（不发送键鼠、不发声）", IsChecked = true, Margin = new Thickness(0, 10, 0, 10) };
     private readonly TextBlock status = new() { Text = "就绪：先导入谱面，快捷键状态见上方。", TextWrapping = TextWrapping.Wrap };
     private readonly TextBox log = new() { IsReadOnly = true, Height = 110, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    // 日志栏容器：勾选“仅日志测试”时展开，取消勾选（准备实际演奏）时收起。
+    private readonly StackPanel logHost = new() { Margin = new Thickness(0, 10, 0, 0) };
     private readonly Button start = new() { Content = "开始 F6", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
     private readonly Button import = new() { Content = "导入 TXT", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
     private readonly Button importMidi = new() { Content = "导入 MIDI", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
@@ -126,6 +128,9 @@ public sealed partial class PlayerWindow : Window
         locateError.IsEnabled = !uiBusy && errorPosition != null;
         listen.IsEnabled = listenFromCursor.IsEnabled = exportMidi.IsEnabled = !uiBusy && scoreIssue == null;
     }
+    // 勾选“仅日志测试”时展开日志栏，取消勾选（准备实际演奏）时收起。
+    private void UpdateLogVisibility() =>
+        logHost.Visibility = dry.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
     private void LocateError()
     {
         if (uiBusy || errorPosition is not int position) return;
@@ -205,12 +210,15 @@ public sealed partial class PlayerWindow : Window
         });
         var playRow = new WrapPanel { Orientation = Orientation.Horizontal };
         playRow.Children.Add(start); playRow.Children.Add(stop); playRow.Children.Add(refresh);
+        logHost.Children.Add(new TextBlock { Text = "日志（仅日志测试时展开）", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 0, 0, 4) });
+        logHost.Children.Add(log);
         panel.Children.Add(Card("演奏", playRow, startReason, dry,
             new TextBlock
             {
                 Text = "实际演奏请取消“仅日志测试”。开始后直接倒计时3秒，不再弹窗；请保持游戏口琴界面在前台，除停止键外不要操作鼠标键盘。",
                 TextWrapping = TextWrapping.Wrap, Foreground = Muted, Margin = new Thickness(0, 0, 0, 8)
-            }, log));
+            }, logHost));
+        UpdateLogVisibility();
         var importRow = new WrapPanel { Orientation = Orientation.Horizontal };
         importRow.Children.Add(import); importRow.Children.Add(importMidi); importRow.Children.Add(importJson);
         var fileRow = new WrapPanel { Orientation = Orientation.Horizontal };
@@ -265,8 +273,8 @@ public sealed partial class PlayerWindow : Window
         foreach (var box in new[] { songTitle, bpm, score, gap })
             box.TextChanged += (_, _) => UpdateDocumentTitle();
         MarkDocumentClean();
-        dry.Checked += (_, _) => UpdateAvailability();
-        dry.Unchecked += (_, _) => UpdateAvailability();
+        dry.Checked += (_, _) => { UpdateLogVisibility(); UpdateAvailability(); };
+        dry.Unchecked += (_, _) => { UpdateLogVisibility(); UpdateAvailability(); };
         SetBusy(false); Preview();
         RefreshLibrary();
         SourceInitialized += (_, _) =>
@@ -551,8 +559,11 @@ public sealed partial class PlayerWindow : Window
         var title = new TextBlock { Text = "曲库（自动读取“简谱”文件夹）", FontWeight = FontWeights.Bold, FontSize = 15, TextWrapping = TextWrapping.Wrap };
         Grid.SetRow(title, 0); grid.Children.Add(title);
         Grid.SetRow(libraryFilter, 1); grid.Children.Add(libraryFilter);
-        var listScroll = new ScrollViewer { Content = libraryList, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Margin = new Thickness(0, 0, 0, 10) };
-        Grid.SetRow(listScroll, 2); grid.Children.Add(listScroll);
+        // 不再套外层 ScrollViewer：让 ListBox 自己滚动，鼠标停在列表任意位置都能用滚轮。
+        libraryList.Margin = new Thickness(0, 0, 0, 10);
+        ScrollViewer.SetVerticalScrollBarVisibility(libraryList, ScrollBarVisibility.Auto);
+        ScrollViewer.SetHorizontalScrollBarVisibility(libraryList, ScrollBarVisibility.Disabled);
+        Grid.SetRow(libraryList, 2); grid.Children.Add(libraryList);
         var footer = new StackPanel();
         footer.Children.Add(libraryHint);
         libraryRefresh.HorizontalAlignment = HorizontalAlignment.Left;

@@ -59,8 +59,10 @@ public sealed partial class PlayerWindow
                     if (closing || token.IsCancellationRequested || !listening) return;
                     int current = timeline.IndexAtTime(ms);
                     var note = timeline.Notes[current];
+                    // 只高亮当前音，不自动滚动谱面：试听时滚动条位置完全由用户决定。
+                    double viewOffset = score.VerticalOffset;
                     score.Select(note.Note.Position, 1);
-                    score.ScrollToLine(score.GetLineIndexFromCharacterIndex(note.Note.Position));
+                    if (Math.Abs(score.VerticalOffset - viewOffset) > 0.5) score.ScrollToVerticalOffset(viewOffset);
                     audioProgress.Value = Math.Clamp((ms - offset) / (timeline.DurationMs - offset) * 100, 0, 100);
                     audioPosition.Text = $"{current + 1}/{timeline.Notes.Count}：{note.Note.Label} · 已试听 {Time(ms - offset)} / {Time(timeline.DurationMs - offset)} · 剩余 {Time(Math.Max(0, timeline.DurationMs - ms))}";
                 }));
@@ -82,7 +84,9 @@ public sealed partial class PlayerWindow
         {
             cancellation?.Cancel(); cancellation?.Dispose(); cancellation = null;
             running = null; beginning = false; listening = false;
+            double restoreOffset = score.VerticalOffset;
             score.Select(Math.Min(selectionStart, score.Text.Length), Math.Min(selectionLength, score.Text.Length - Math.Min(selectionStart, score.Text.Length)));
+            if (Math.Abs(score.VerticalOffset - restoreOffset) > 0.5) score.ScrollToVerticalOffset(restoreOffset);
             SetBusy(false);
         }
     }

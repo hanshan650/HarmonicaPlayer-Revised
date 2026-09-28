@@ -88,6 +88,7 @@ public static class WindowsSmokeTests
                 await SettingsGenerationTests();
                 await DocumentWindowTests();
                 await AudioWindowTests();
+                await LogAndScrollTests();
                 await LibraryWindowTests();
                 await MidiWindowTests();
                 await JsonWindowTests();
@@ -301,6 +302,75 @@ public static class WindowsSmokeTests
             if(File.Exists(path)) File.Delete(path);
             if(File.Exists(path + ".mid")) File.Delete(path + ".mid");
         }
+    }
+
+    // 日志栏跟随“仅日志测试”展开/收起；试听时不自动滚动谱面；曲库列表自身可滚动。
+    private static async Task LogAndScrollTests()
+    {
+        string path = Path.Combine(Path.GetTempPath(), "HarmonicaScroll-" + Guid.NewGuid() + ".json");
+        var fake = new FakeLocalAudio();
+        var window = new PlayerWindow(path, new TestScoreDialogs(), audioPlayer: fake);
+        try
+        {
+            window.Show(); await WaitUntil(() => window.IsLoaded, "scroll window loaded");
+            var dry = Field<CheckBox>(window, "dry");
+            var host = Field<StackPanel>(window, "logHost");
+            if (dry.IsChecked != true || host.Visibility != Visibility.Visible)
+                throw new Exception("Dry-run log panel is not expanded by default");
+            dry.IsChecked = false;
+            if (host.Visibility != Visibility.Collapsed) throw new Exception("Log panel did not collapse when dry-run is off");
+            dry.IsChecked = true;
+            if (host.Visibility != Visibility.Visible) throw new Exception("Log panel did not expand when dry-run is on");
+
+            var editor = Field<TextBox>(window, "score");
+            editor.Text = string.Join("\n", Enumerable.Repeat("1", 60));
+            editor.Select(0, 0);
+            window.UpdateLayout();
+            var editorScroll = FindScrollViewer(editor);
+            if (editorScroll == null || editorScroll.ScrollableHeight <= 0)
+                throw new Exception("Editor should be scrollable in this test");
+            editor.ScrollToVerticalOffset(editorScroll.ScrollableHeight / 2);
+            window.UpdateLayout();
+            double before = editor.VerticalOffset;
+            if (before <= 0) throw new Exception("Editor did not scroll");
+
+            var run = Invoke(window, "ListenAsync", false);
+            await WaitUntil(() => fake.Active, "preview started");
+            fake.Report!(27500); // 第 56 个音（BPM120 时约 27.5s），在谱面末尾
+            await WaitUntil(() => editor.SelectionStart == 110, "progress highlighted a late note");
+            window.UpdateLayout();
+            if (Math.Abs(editor.VerticalOffset - before) > 1)
+                throw new Exception($"Preview scrolled the editor (was {before}, now {editor.VerticalOffset})");
+            Field<Button>(window, "stop").RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            await run.WaitAsync(TimeSpan.FromSeconds(3));
+            if (Math.Abs(editor.VerticalOffset - before) > 1) throw new Exception("Stopping the preview scrolled the editor");
+
+            // 曲库列表不再包在外层 ScrollViewer 里，自己滚动：滚轮停在列表任意位置都生效。
+            var list = Field<ListBox>(window, "libraryList");
+            if (list.Parent is ScrollViewer) throw new Exception("Library list is still wrapped in an outer ScrollViewer");
+            list.ItemsSource = Enumerable.Range(0, 80).Select(i => $"测试曲目 {i}").ToArray();
+            window.UpdateLayout();
+            var inner = FindScrollViewer(list);
+            if (inner == null || inner.ScrollableHeight <= 0) throw new Exception("Library list cannot scroll itself");
+            Console.WriteLine("PASS log/scroll: dry-run log panel, preview keeps scroll offset, library list scrolls itself");
+        }
+        finally
+        {
+            if (window.IsVisible) await CloseWindow(window);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        }
+    }
+
+    private static ScrollViewer? FindScrollViewer(DependencyObject root)
+    {
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i);
+            if (child is ScrollViewer viewer) return viewer;
+            var found = FindScrollViewer(child);
+            if (found != null) return found;
+        }
+        return null;
     }
 
     // 曲库侧栏：启动时自动扫描 简谱\TXT|MIDI|JSON，筛选，点一下即导入。
