@@ -25,7 +25,7 @@ public sealed partial class PlayerWindow
         row.Children.Add(volumeSlider); row.Children.Add(volumeLabel);
         panel.Children.Add(row); panel.Children.Add(audioProgress); panel.Children.Add(audioPosition);
         score.IsInactiveSelectionHighlightEnabled = true;
-        score.SelectionBrush = Brushes.Gold; score.SelectionOpacity = .6;
+        score.SelectionBrush = Accent; score.SelectionOpacity = .28;
         listen.Click += async (_, _) => await ListenAsync(false);
         listenFromCursor.Click += async (_, _) => await ListenAsync(true);
         exportMidi.Click += async (_, _) => await ExportMidiAsync();

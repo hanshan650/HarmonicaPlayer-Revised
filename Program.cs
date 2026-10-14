@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,7 @@ public sealed partial class PlayerWindow : Window
 
     private readonly TextBox songTitle = new() { Text = "未命名曲谱" };
     private readonly TextBlock documentInfo = new() { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, Foreground = Muted, FontSize = 12 };
-    private readonly TextBlock documentWarning = new() { TextWrapping = TextWrapping.Wrap, Background = Brushes.LemonChiffon };
+    private readonly TextBlock documentWarning = new() { TextWrapping = TextWrapping.Wrap, Background = WarnFill, Foreground = WarnInk, Padding = new Thickness(8, 4, 8, 4), Margin = new Thickness(0, 4, 0, 0), Visibility = Visibility.Collapsed };
     private readonly Button saveScore = new() { Content = "保存 TXT", Margin = new Thickness(5) };
     private readonly Button saveAs = new() { Content = "另存为", Margin = new Thickness(5) };
     private readonly Button newScore = new() { Content = "新建", Margin = new Thickness(5) };
@@ -49,11 +50,17 @@ public sealed partial class PlayerWindow : Window
         documentInfo.ToolTip = documentPath;
     }
     private void MarkDocumentClean() { cleanDocument = (songTitle.Text, bpm.Text, score.Text, gap.Text); UpdateDocumentTitle(); }
-    private readonly TextBox score = new() { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Height = 230, Text = "1234567 【1234567】 （1234567） #1 #2 #4 #5 #6 111 000" };
+    // 导入/保存的提示条：没有内容时整条收起，避免留下一根空色带占位。
+    private void SetDocumentWarning(string text)
+    {
+        documentWarning.Text = text;
+        documentWarning.Visibility = string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
+    }
+    private readonly TextBox score = new() { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, VerticalContentAlignment = VerticalAlignment.Top, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Height = 230, Text = "1234567 【1234567】 （1234567） #1 #2 #4 #5 #6 111 000" };
     private readonly TextBox gap = new() { Text = "20", Width = 75 };
     private readonly CheckBox dry = new() { Content = "仅日志测试（不发送键鼠、不发声）", IsChecked = true, Margin = new Thickness(0, 10, 0, 10) };
     private readonly TextBlock status = new() { Text = "就绪：先导入谱面，快捷键状态见上方。", TextWrapping = TextWrapping.Wrap };
-    private readonly TextBox log = new() { IsReadOnly = true, Height = 110, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    private readonly TextBox log = new() { IsReadOnly = true, Height = 110, VerticalContentAlignment = VerticalAlignment.Top, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     // 日志栏容器：勾选“仅日志测试”时展开，取消勾选（准备实际演奏）时收起。
     private readonly StackPanel logHost = new() { Margin = new Thickness(0, 10, 0, 0) };
     private readonly Button start = new() { Content = "开始 F6", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
@@ -61,10 +68,10 @@ public sealed partial class PlayerWindow : Window
     private readonly Button importMidi = new() { Content = "导入 MIDI", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
     private readonly Button importJson = new() { Content = "导入 JSON", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
     private readonly TextBox bpm = new() { Text = "120", Width = 75 };
-    private readonly TextBox preview = new() { IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, Height = 130, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    private readonly TextBox preview = new() { IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, Height = 130, VerticalContentAlignment = VerticalAlignment.Top, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     private readonly Button refresh = new() { Content = "预览 / 检查", Margin = new Thickness(5), Padding = new Thickness(12, 6, 12, 6) };
-    private readonly TextBlock alert = new() { TextWrapping = TextWrapping.Wrap, FontSize = 16, FontWeight = FontWeights.Bold, Foreground = Brushes.DarkRed };
-    private readonly Border alertBox = new() { Background = Brushes.MistyRose, Padding = new Thickness(12), Margin = new Thickness(0, 6, 0, 6), Visibility = Visibility.Collapsed };
+    private readonly TextBlock alert = new() { TextWrapping = TextWrapping.Wrap, FontSize = 16, FontWeight = FontWeights.Bold, Foreground = AlertInk };
+    private readonly Border alertBox = new() { Background = AlertFill, BorderBrush = Danger, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(8), Padding = new Thickness(12), Margin = new Thickness(0, 6, 0, 6), Visibility = Visibility.Collapsed };
     private string? scoreIssue, hotkeyIssue, operationIssue;
     private int? errorPosition;
     private bool uiBusy;
@@ -81,22 +88,34 @@ public sealed partial class PlayerWindow : Window
     private bool suppressLibraryChange;
     private sealed record LibraryEntry(string Path, string Kind, string Title);
 
-    // 统一配色与间距。
-    private static readonly Brush Accent = new SolidColorBrush(Color.FromRgb(0x2F, 0x6F, 0xED));
-    private static readonly Brush Danger = new SolidColorBrush(Color.FromRgb(0xD1, 0x3B, 0x3B));
-    private static readonly Brush Page = new SolidColorBrush(Color.FromRgb(0xF4, 0xF6, 0xFA));
-    private static readonly Brush CardFill = Brushes.White;
-    private static readonly Brush Muted = new SolidColorBrush(Color.FromRgb(0x6B, 0x72, 0x80));
-    private static readonly Brush Line = new SolidColorBrush(Color.FromRgb(0xE2, 0xE6, 0xED));
+    // 统一配色与间距（深色科技风；控件模板见 DarkTheme.cs）。
+    private static readonly Brush Accent = new SolidColorBrush(Color.FromRgb(0x22, 0xD3, 0xEE));   // 主色：青
+    private static readonly Brush AccentInk = new SolidColorBrush(Color.FromRgb(0x04, 0x1E, 0x26)); // 主色按钮上的深色字
+    private static readonly Brush Danger = new SolidColorBrush(Color.FromRgb(0xE1, 0x4D, 0x63));
+    private static readonly Brush Page = new SolidColorBrush(Color.FromRgb(0x0A, 0x0E, 0x13));     // 窗口底
+    private static readonly Brush CardFill = new SolidColorBrush(Color.FromRgb(0x12, 0x18, 0x21)); // 卡片
+    private static readonly Brush FieldFill = new SolidColorBrush(Color.FromRgb(0x16, 0x1E, 0x28));// 次级按钮
+    private static readonly Brush TextMain = new SolidColorBrush(Color.FromRgb(0xE6, 0xED, 0xF3));
+    private static readonly Brush Muted = new SolidColorBrush(Color.FromRgb(0x8B, 0x9A, 0xAB));
+    private static readonly Brush Line = new SolidColorBrush(Color.FromRgb(0x23, 0x2F, 0x3D));
+    private static readonly Brush WarnFill = new SolidColorBrush(Color.FromRgb(0x2A, 0x22, 0x10));
+    private static readonly Brush WarnInk = new SolidColorBrush(Color.FromRgb(0xFB, 0xBF, 0x24));
+    private static readonly Brush AlertFill = new SolidColorBrush(Color.FromRgb(0x2A, 0x14, 0x18));
+    private static readonly Brush AlertInk = new SolidColorBrush(Color.FromRgb(0xFF, 0x9A, 0xA6));
 
-    // 白卡片 + 浅边框 + 小标题，让各功能区一眼分得开。
+    // 深色卡片：小标题前加一根主色竖条，功能区一眼分得开。
     private static Border Card(string title, params UIElement[] content)
     {
         var stack = new StackPanel();
-        stack.Children.Add(new TextBlock { Text = title, FontWeight = FontWeights.Bold, FontSize = 15, Margin = new Thickness(0, 0, 0, 8) });
+        var heading = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
+        heading.Children.Add(new Border { Width = 3, Height = 15, CornerRadius = new CornerRadius(2),
+            Background = Accent, Margin = new Thickness(0, 0, 9, 0), VerticalAlignment = VerticalAlignment.Center });
+        heading.Children.Add(new TextBlock { Text = title, FontWeight = FontWeights.Bold, FontSize = 15,
+            Foreground = TextMain, VerticalAlignment = VerticalAlignment.Center });
+        stack.Children.Add(heading);
         foreach (var item in content) stack.Children.Add(item);
         return new Border { Background = CardFill, BorderBrush = Line, BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(8), Padding = new Thickness(14), Margin = new Thickness(0, 0, 0, 12), Child = stack };
+            CornerRadius = new CornerRadius(10), Padding = new Thickness(16), Margin = new Thickness(0, 0, 0, 12), Child = stack };
     }
 
     private static void StyleButton(Button button, bool primary = false, bool danger = false)
@@ -106,8 +125,8 @@ public sealed partial class PlayerWindow : Window
         button.MinWidth = 96;
         button.BorderThickness = new Thickness(1);
         button.BorderBrush = primary || danger ? Brushes.Transparent : Line;
-        button.Background = primary ? Accent : danger ? Danger : Brushes.White;
-        button.Foreground = primary || danger ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x33, 0x38, 0x40));
+        button.Background = primary ? Accent : danger ? Danger : FieldFill;
+        button.Foreground = primary ? AccentInk : danger ? Brushes.White : TextMain;
         button.FontWeight = primary ? FontWeights.SemiBold : FontWeights.Normal;
     }
 
@@ -118,6 +137,24 @@ public sealed partial class PlayerWindow : Window
         row.Children.Add(new TextBlock { Text = label, Width = labelWidth, VerticalAlignment = VerticalAlignment.Center });
         row.Children.Add(input);
         return row;
+    }
+
+    // 让系统标题栏也变深色，免得深色界面顶着一根亮色标题栏。
+    // DWMWA_USE_IMMERSIVE_DARK_MODE：Win10 1809 起为 19，Win10 20H1 起为 20。
+    [DllImport("dwmapi.dll", PreserveSig = true)]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
+
+    private static void ApplyDarkTitleBar(IntPtr handle)
+    {
+        if (handle == IntPtr.Zero) return;
+        try
+        {
+            int enabled = 1;
+            if (DwmSetWindowAttribute(handle, 20, ref enabled, sizeof(int)) != 0)
+                DwmSetWindowAttribute(handle, 19, ref enabled, sizeof(int));
+        }
+        catch (DllNotFoundException) { /* 非 Windows 或旧版 dwmapi，忽略。 */ }
+        catch (EntryPointNotFoundException) { }
     }
 
     private void UpdateAvailability()
@@ -168,11 +205,12 @@ public sealed partial class PlayerWindow : Window
 
     public PlayerWindow(string? settingsFile = null, IScoreDialogs? dialogs = null, Action<AppSettings>? writeSettings = null, ILocalAudioPlayer? audioPlayer = null)
     {
+        Resources.MergedDictionaries.Add(DarkTheme.Dictionary);
         scoreDialogs = dialogs ?? new ScoreDialogs();
         localAudio = audioPlayer ?? new LocalAudioPlayer();
         settingsPath = settingsFile ?? SettingsStore.DefaultPath;
-        Title = $"口琴简谱播放器 {VersionLabel}"; Width = 1000; Height = 960; MinWidth = 820; MinHeight = 660;
-        Background = Page; FontFamily = new FontFamily("Microsoft YaHei UI, Segoe UI"); FontSize = 13.5;
+        Title = $"口琴简谱播放器 {VersionLabel}"; Width = 1060; Height = 880; MinWidth = 880; MinHeight = 640;
+        Background = Page; Foreground = TextMain; FontFamily = new FontFamily("Microsoft YaHei UI, Segoe UI"); FontSize = 13.5;
         var panel = new StackPanel { Margin = new Thickness(18) };
         var root = new DockPanel { Margin = new Thickness(8) };
         var fixedHeader = new StackPanel();
@@ -191,6 +229,7 @@ public sealed partial class PlayerWindow : Window
         alertPanel.Children.Add(alertActions); alertBox.Child = alertPanel;
         fixedHeader.Children.Add(alertBox);
         status.FontSize = 19; status.FontWeight = FontWeights.Bold;
+        status.Foreground = Accent;
         status.Margin = new Thickness(12, 4, 12, 8);
         fixedHeader.Children.Add(status);
         DockPanel.SetDock(fixedHeader, Dock.Top); root.Children.Add(fixedHeader);
@@ -290,6 +329,7 @@ public sealed partial class PlayerWindow : Window
         SourceInitialized += (_, _) =>
         {
             hwnd = new WindowInteropHelper(this).Handle;
+            ApplyDarkTitleBar(hwnd);
             source = HwndSource.FromHwnd(hwnd); source.AddHook(Hook);
             hotkeys = new HotkeyController(new NativeHotkeys(hwnd));
             ApplyHotkeys();
@@ -454,7 +494,7 @@ public sealed partial class PlayerWindow : Window
         // Saving the current document may have updated the very file selected for import.
         result = await ScoreDocumentReader.ReadAsync(path, fallback);
         ApplyDocument(result.Document);
-        documentWarning.Text = string.Join("\n", result.Warnings);
+        SetDocumentWarning(string.Join("\n", result.Warnings));
         status.Text = scoreIssue == null ? "已导入，检查通过；请确认速度（BPM）。" : "已导入，请修正顶部提示的错误。";
         SelectLibraryFile(path);
         return true;
@@ -478,7 +518,7 @@ public sealed partial class PlayerWindow : Window
         ApplyDocument(new ScoreDocument(result.Title, result.Bpm, result.Body));
         ShowTrackChoice(Source(true, tracks.Count, path, tracks.Select(t => t.Index.ToString()).ToArray(),
             tracks.Select(t => t.Describe()).ToArray()), index?.ToString());
-        documentWarning.Text = string.Join("\n", result.Warnings);
+        SetDocumentWarning(string.Join("\n", result.Warnings));
         status.Text = Imported(result.LoweredFromBpm, "MIDI");
         SelectLibraryFile(path);
         return true;
@@ -502,7 +542,7 @@ public sealed partial class PlayerWindow : Window
         ApplyDocument(new ScoreDocument(result.Title, result.Bpm, result.Body));
         ShowTrackChoice(Source(false, tracks.Count, path, tracks.Select(t => t.Label).ToArray(),
             tracks.Select(t => t.Describe()).ToArray()), label);
-        documentWarning.Text = string.Join("\n", result.Warnings);
+        SetDocumentWarning(string.Join("\n", result.Warnings));
         status.Text = Imported(result.LoweredFromBpm, "JSON");
         SelectLibraryFile(path);
         return true;
@@ -551,7 +591,7 @@ public sealed partial class PlayerWindow : Window
             }
             ApplyDocument(new ScoreDocument(title, importedBpm, body));
             ShowTrackChoice(source, label);
-            documentWarning.Text = string.Join("\n", importedWarnings);
+            SetDocumentWarning(string.Join("\n", importedWarnings));
             status.Text = $"已换轨：{source.Descriptions[index]}";
             return true;
         });
@@ -580,9 +620,7 @@ public sealed partial class PlayerWindow : Window
         StyleButton(libraryRefresh);
         footer.Children.Add(libraryRefresh);
         Grid.SetRow(footer, 3); grid.Children.Add(footer);
-        var itemStyle = new Style(typeof(ListBoxItem));
-        itemStyle.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(8, 6, 8, 6)));
-        libraryList.ItemContainerStyle = itemStyle;
+        // 列表项外观（内边距、悬停、选中）统一交给 DarkTheme 的隐式 ListBoxItem 样式。
         libraryList.SelectionChanged += async (_, _) => await LibrarySelectionChanged();
         libraryFilter.TextChanged += (_, _) => ApplyLibraryFilter();
         libraryRefresh.Click += (_, _) =>
@@ -664,7 +702,7 @@ public sealed partial class PlayerWindow : Window
         extraHeaders = document.ExtraHeaders ?? Array.Empty<string>();
         songTitle.Text = document.Title; bpm.Text = document.Bpm.ToString(); score.Text = document.ScoreText;
         gap.Text = document.Gap.ToString();
-        documentWarning.Text = ""; operationIssue = null;
+        SetDocumentWarning(""); operationIssue = null;
         ShowTrackChoice(null, null);   // 换曲谱即清空音轨下拉；导入 JSON/MIDI 会随后重新填入。
         MarkDocumentClean(); Preview();
     }
@@ -694,8 +732,8 @@ public sealed partial class PlayerWindow : Window
             }
             await ScoreDocumentWriter.SaveAsync(path, document, gap.Text);
             documentPath = Path.GetFullPath(path); legacyDocument = false;
-            documentWarning.Text = string.Join("\n", ScoreDocumentReader.Parse(
-                ScoreDocumentWriter.Serialize(document, gap.Text), documentPath, document.Bpm).Warnings);
+            SetDocumentWarning(string.Join("\n", ScoreDocumentReader.Parse(
+                ScoreDocumentWriter.Serialize(document, gap.Text), documentPath, document.Bpm).Warnings));
             MarkDocumentClean(); operationIssue = null; UpdateAlert();
             SelectLibraryFile(path);
             status.Text = "曲谱已保存（新格式，含曲名、BPM和音符间隔）。";
