@@ -187,6 +187,7 @@ ReleaseAudioTests.Run();
 ShortNoteAudioTests.Run();
 MidiImportTests.Run();
 JsonImportTests.Run();
+ScoreEditorTests.Run();
 
 sealed class FakeHotkeys : IHotkeyBackend
 {

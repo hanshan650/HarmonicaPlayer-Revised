@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -61,6 +62,14 @@ public sealed partial class PlayerWindow : Window
         documentWarning.Visibility = string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
     }
     private readonly TextBox score = new() { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, VerticalContentAlignment = VerticalAlignment.Top, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Height = 230, Text = "1234567 【1234567】 （1234567） #1 #2 #4 #5 #6 111 000" };
+    // 曲谱编辑按钮：只改「选中部分」（没有选区时改光标左侧那个音符）。
+    // 变换逻辑在 ScoreEditor 里（纯字符串函数，有单元测试），这里只管选区与替换。
+    private readonly List<Control> editControls = new();
+    private readonly TextBlock editHint = new()
+    {
+        Text = "在下面的谱面里选中音符（或把光标停在某个音符后面），再点上面的按钮；只改选中的部分，可以 Ctrl+Z 撤销。",
+        TextWrapping = TextWrapping.Wrap, Foreground = Muted, FontSize = 12, Margin = new Thickness(0, 5, 0, 0)
+    };
     private readonly TextBox gap = new() { Text = "20", Width = 75 };
     private readonly CheckBox dry = new() { Content = "仅日志测试（不发送键鼠、不发声）", IsChecked = true, Margin = new Thickness(0, 10, 0, 10) };
     private readonly TextBlock status = new() { Text = "就绪：先导入谱面，快捷键状态见上方。", TextWrapping = TextWrapping.Wrap };
@@ -200,6 +209,136 @@ public sealed partial class PlayerWindow : Window
         row.Children.Add(new TextBlock { Text = label, Width = labelWidth, VerticalAlignment = VerticalAlignment.Center });
         row.Children.Add(input);
         return row;
+    }
+
+    // ---------- 曲谱编辑按钮 ----------
+
+    private Button Chip(string label, string tip, Action click)
+    {
+        var button = new Button
+        {
+            Content = label, ToolTip = tip, FontSize = 12.5,
+            Padding = new Thickness(10, 3, 10, 4), Margin = new Thickness(0, 0, 6, 6)
+        };
+        button.Click += (_, _) => click();
+        editControls.Add(button);
+        return button;
+    }
+
+    private static WrapPanel ChipRow(string label, params UIElement[] chips)
+    {
+        var row = new WrapPanel { Margin = new Thickness(0, 0, 0, 2) };
+        row.Children.Add(new TextBlock
+        {
+            Text = label, Foreground = Muted, FontSize = 12, Width = 34,
+            VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 6, 6)
+        });
+        foreach (var chip in chips) row.Children.Add(chip);
+        return row;
+    }
+
+    // 曲谱编辑的三组按钮。都走同一套「改选中部分」的逻辑，所以可以任意组合使用：
+    // 例如先框选一整句再点 ＋八度，就把整句移高一个八度，时值符号原样保留。
+    private UIElement BuildScoreTools()
+    {
+        var custom = new TextBox
+        {
+            Text = "1.25", Width = 58, Padding = new Thickness(7, 3, 7, 3),
+            Margin = new Thickness(0, 0, 6, 6), VerticalAlignment = VerticalAlignment.Center,
+            ToolTip = "填写任意拍数（大于0、不超过64），点右侧“应用”"
+        };
+        editControls.Add(custom);
+
+        var pitch = ChipRow("音高",
+            Chip("−八度", "低一个八度：中音 1 → 低音（1），高音【1】→ 中音 1",
+                () => EditScore(t => ScoreEditor.ApplyPitch(t, ScoreEditor.Pitch.OctaveDown))),
+            Chip("＋八度", "高一个八度：中音 1 → 高音【1】，高音【1】→ 最高音【【1】】",
+                () => EditScore(t => ScoreEditor.ApplyPitch(t, ScoreEditor.Pitch.OctaveUp))),
+            Chip("＃升半音", "加或去掉升号；升号写在括号内，如【1】→【#1】",
+                () => EditScore(t => ScoreEditor.ApplyPitch(t, ScoreEditor.Pitch.ToggleSharp))),
+            Chip("还原", "去掉升号与高低音括号，回到中音",
+                () => EditScore(t => ScoreEditor.ApplyPitch(t, ScoreEditor.Pitch.Natural))),
+            Chip("最高do", "写成【【1】】，全曲只有这一个音；时值符号写在括号外",
+                () => EditScore(t => ScoreEditor.ApplyPitch(t, ScoreEditor.Pitch.Highest))));
+
+        var beats = ChipRow("时值",
+            Chip("1拍", "整拍：去掉现有的时候符号", () => EditScore(t => ScoreEditor.ApplyBeats(t, 1))),
+            Chip("½拍", "八分音符，写作 5_", () => EditScore(t => ScoreEditor.ApplyBeats(t, 0.5))),
+            Chip("¼拍", "十六分音符，写作 5__", () => EditScore(t => ScoreEditor.ApplyBeats(t, 0.25))),
+            Chip("¾拍", "半拍加附点，写作 5_.", () => EditScore(t => ScoreEditor.ApplyBeats(t, 0.75))),
+            Chip("1.5拍", "附点：一拍加附点，写作 5.，共一点五拍", () => EditScore(t => ScoreEditor.ApplyBeats(t, 1.5))),
+            Chip("2拍", "延长一拍，写作 5 —", () => EditScore(t => ScoreEditor.ApplyBeats(t, 2))),
+            custom,
+            Chip("应用", "按左边填的数字设置总拍数；不是常见值时写成冒号写法，如 5:1.25",
+                () =>
+                {
+                    if (!double.TryParse(custom.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out double value))
+                    {
+                        editHint.Text = "请输入 0 到 64 之间的拍数，例如 1.25。";
+                        return;
+                    }
+                    EditScore(t => ScoreEditor.ApplyBeats(t, value));
+                }));
+
+        var insert = ChipRow("插入",
+            Chip("休止符 0", "插入休止符：不发声但占时间，可再用上面的时值按钮改长短", () => InsertAtCaret(" 0")),
+            Chip("小节线 |", "插入小节线，只作视觉分隔，不增加停顿", () => InsertAtCaret(" | ")));
+
+        var box = new StackPanel { Margin = new Thickness(0, 0, 0, 8) };
+        box.Children.Add(pitch);
+        box.Children.Add(beats);
+        box.Children.Add(insert);
+        // 提示紧跟在按钮组下面：点完按钮眼睛就在这一带，反馈一定看得见。
+        box.Children.Add(editHint);
+        return box;
+    }
+
+    // 取出选区（没有选区就取光标左侧的音符），交给 transform 改写后写回。
+    // 写回用 SelectedText 而不是直接赋 Text：前者走编辑管道，Ctrl+Z 仍然能撤销。
+    private void EditScore(Func<string, ScoreEditor.Result> transform)
+    {
+        if (uiBusy) return;
+        string whole = score.Text;
+        int start = score.SelectionStart;
+        int length = score.SelectionLength;
+        if (length == 0)
+        {
+            if (!ScoreEditor.TryExpandCaret(whole, start, out start, out int end))
+            {
+                editHint.Text = "请先选中要修改的音符；也可以把光标停在某个音符后面再点。";
+                return;
+            }
+            length = end - start;
+        }
+
+        string selected = whole.Substring(start, length);
+        var result = transform(selected);
+        if (result.Text == selected)
+        {
+            editHint.Text = result.Notes.Count > 0
+                ? string.Join("；", result.Notes)
+                : "选中的音符已经是这个值，没有改动。";
+            return;
+        }
+
+        score.Focus();
+        score.Select(start, length);
+        score.SelectedText = result.Text;
+        score.Select(start, result.Text.Length);
+        editHint.Text = $"已修改 {result.Changed} 个音符" +
+            (result.Notes.Count > 0 ? "；" + string.Join("；", result.Notes) : "。");
+    }
+
+    // 插入类按钮：插在光标处，不覆盖已有内容。
+    private void InsertAtCaret(string text)
+    {
+        if (uiBusy) return;
+        score.Focus();
+        int at = score.SelectionStart;
+        score.Select(at, 0);
+        score.SelectedText = text;
+        score.Select(at + text.Length, 0);
+        editHint.Text = $"已在光标处插入 {text.Trim()}。";
     }
 
     // 原来这里用 DwmSetWindowAttribute 把「系统标题栏」染成深色。改为无边框自绘标题栏后，
@@ -350,7 +489,8 @@ public sealed partial class PlayerWindow : Window
         panel.Children.Add(Card("曲谱编辑",
             new TextBlock { Text = "曲名（与文件名独立）：", Margin = new Thickness(0, 0, 0, 4) }, songTitle,
             documentInfo, documentWarning,
-            new TextBlock { Text = "谱面（TXT → 单音简谱）", Margin = new Thickness(0, 8, 0, 4), Foreground = Muted }, score,
+            new TextBlock { Text = "谱面（TXT → 单音简谱）", Margin = new Thickness(0, 10, 0, 6), Foreground = Muted },
+            BuildScoreTools(), score,
             Row("速度（BPM）：", bpm),
             Row("音符间隔／留白(ms)：", gap),
             new TextBlock { Text = "解析预览（每个音的拍数和时间；不是图片识谱）", Margin = new Thickness(0, 8, 0, 4), Foreground = Muted }, preview));
@@ -892,6 +1032,7 @@ public sealed partial class PlayerWindow : Window
         configure.IsEnabled = retry.IsEnabled = !busy;
         score.IsReadOnly = busy;
         songTitle.IsReadOnly = busy;
+        foreach (var control in editControls) control.IsEnabled = !busy;
         saveScore.IsEnabled = saveAs.IsEnabled = newScore.IsEnabled = !busy;
         UpdateAvailability();
     }
