@@ -67,9 +67,19 @@ public sealed partial class PlayerWindow : Window
     private readonly List<Control> editControls = new();
     private readonly TextBlock editHint = new()
     {
-        Text = "在下面的谱面里选中音符（或把光标停在某个音符后面），再点上面的按钮；只改选中的部分，可以 Ctrl+Z 撤销。",
+        Text = "在谱面里点一下某个音符（或框选一段），它会实时高亮 —— 高亮的就是上面按钮要改的部分；可以 Ctrl+Z 撤销。",
         TextWrapping = TextWrapping.Wrap, Foreground = Muted, FontSize = 12, Margin = new Thickness(0, 5, 0, 0)
     };
+    // 当前目标音符的高亮浮层：叠在谱面输入框上面的一个圆角框。
+    // 刻意不去改 TextBox 自己的选区：改选区会影响打字（一个字符就会顶掉整个音符），浮层则完全不影响编辑与撤销。
+    private readonly Canvas noteMarkLayer = new() { IsHitTestVisible = false, ClipToBounds = true };
+    private readonly Border noteMark = new()
+    {
+        CornerRadius = new CornerRadius(4), Background = NoteMarkFill, BorderBrush = NoteMarkLine,
+        BorderThickness = new Thickness(1), Visibility = Visibility.Collapsed, IsHitTestVisible = false
+    };
+    private ScrollViewer? scoreScrollViewer;
+    private bool noteMarkQueued;
     private readonly TextBox gap = new() { Text = "20", Width = 75 };
     private readonly CheckBox dry = new() { Content = "仅日志测试（不发送键鼠、不发声）", IsChecked = true, Margin = new Thickness(0, 10, 0, 10) };
     private readonly TextBlock status = new() { Text = "就绪：先导入谱面，快捷键状态见上方。", TextWrapping = TextWrapping.Wrap };
@@ -138,6 +148,9 @@ public sealed partial class PlayerWindow : Window
     // 参考站的按钮都压着一层同色辉光；WPF 里用 ShadowDepth=0 的投影等效。
     private static DropShadowEffect Glow(Color color, double opacity) =>
         new() { Color = color, ShadowDepth = 0, BlurRadius = 16, Opacity = opacity };
+    // 「当前目标音符」的高亮框：主色半透明底 + 主色描边，画在谱面输入框之上的浮层里。
+    private static readonly Brush NoteMarkFill = new SolidColorBrush(Color.FromArgb(0x38, 0x22, 0xD3, 0xEE));
+    private static readonly Brush NoteMarkLine = new SolidColorBrush(Color.FromArgb(0xAA, 0x22, 0xD3, 0xEE));
     private static readonly Brush WarnFill = new SolidColorBrush(Color.FromRgb(0x2A, 0x22, 0x10));
     private static readonly Brush WarnInk = new SolidColorBrush(Color.FromRgb(0xFB, 0xBF, 0x24));
     private static readonly Brush AlertFill = new SolidColorBrush(Color.FromRgb(0x2A, 0x14, 0x18));
@@ -293,23 +306,97 @@ public sealed partial class PlayerWindow : Window
         return box;
     }
 
+    // 谱面输入框 + 「当前目标音符」高亮浮层。两者同一个格子，浮层不参与命中测试，
+    // 所以点、选、拖、滚全部照旧，浮层只负责把目标音框出来。
+    private UIElement BuildScoreArea()
+    {
+        noteMarkLayer.Children.Add(noteMark);
+        var host = new Grid();
+        host.Children.Add(score);
+        host.Children.Add(noteMarkLayer);
+        score.SelectionChanged += (_, _) => QueueNoteMark();
+        score.TextChanged += (_, _) => QueueNoteMark();
+        score.SizeChanged += (_, _) => QueueNoteMark();
+        score.Loaded += (_, _) =>
+        {
+            // 文本框内部那个滚动条一动，字符坐标就全变了，必须跟着重算。
+            scoreScrollViewer = FindDescendant<ScrollViewer>(score);
+            if (scoreScrollViewer != null) scoreScrollViewer.ScrollChanged += (_, _) => QueueNoteMark();
+            QueueNoteMark();
+        };
+        return host;
+    }
+
+    private static T? FindDescendant<T>(DependencyObject root) where T : DependencyObject
+    {
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T hit) return hit;
+            if (FindDescendant<T>(child) is T deep) return deep;
+        }
+        return null;
+    }
+
+    // 位置依赖布局：等这一轮布局跑完再算，避免拿到上一帧的字符坐标（打字时尤其明显）。
+    private void QueueNoteMark()
+    {
+        if (noteMarkQueued) return;
+        noteMarkQueued = true;
+        score.Dispatcher.BeginInvoke(DispatcherPriority.Loaded,
+            new Action(() => { noteMarkQueued = false; UpdateNoteMark(); }));
+    }
+
+    // 把「点编辑按钮会改动的那个音符」框出来。
+    // 范围来自 ScoreEditor.TryGetTargetRange，与 EditScore 用的是同一个函数，
+    // 所以框住的就一定是会被改的；有选区时系统自己的选区底色已经在闪，不再叠第二层。
+    private void UpdateNoteMark()
+    {
+        noteMark.Visibility = Visibility.Collapsed;
+        if (score.SelectionLength > 0 || score.ActualWidth <= 0) return;
+        if (!ScoreEditor.TryGetTargetRange(score.Text, score.SelectionStart, 0, out int start, out int end)) return;
+        if (end <= start) return;
+
+        Rect head = score.GetRectFromCharacterIndex(start, false);
+        Rect tail = score.GetRectFromCharacterIndex(end - 1, true);
+        if (head.IsEmpty || tail.IsEmpty) return;
+
+        double left = head.Left, right = tail.Right, top = head.Top, bottom = head.Bottom;
+        if (Math.Abs(head.Top - tail.Top) > 0.5)
+        {
+            // 音符正好被换行拆到两行：只框住第一行那一段，不画一个跨行的大方块。
+            right = Math.Max(head.Right, score.ActualWidth - 8);
+            bottom = head.Bottom;
+        }
+
+        const double padX = 2, padY = 1.5;
+        double x = Math.Max(0, left - padX);
+        double y = Math.Max(0, top - padY);
+        double w = Math.Min(right + padX, score.ActualWidth) - x;
+        double h = bottom - top + padY * 2;
+        if (w <= 1 || h <= 1) return;
+
+        Canvas.SetLeft(noteMark, x);
+        Canvas.SetTop(noteMark, y);
+        noteMark.Width = w;
+        noteMark.Height = h;
+        noteMark.Visibility = Visibility.Visible;
+    }
+
     // 取出选区（没有选区就取光标左侧的音符），交给 transform 改写后写回。
     // 写回用 SelectedText 而不是直接赋 Text：前者走编辑管道，Ctrl+Z 仍然能撤销。
     private void EditScore(Func<string, ScoreEditor.Result> transform)
     {
         if (uiBusy) return;
         string whole = score.Text;
-        int start = score.SelectionStart;
-        int length = score.SelectionLength;
-        if (length == 0)
+        if (!ScoreEditor.TryGetTargetRange(whole, score.SelectionStart, score.SelectionLength,
+                out int start, out int end))
         {
-            if (!ScoreEditor.TryExpandCaret(whole, start, out start, out int end))
-            {
-                editHint.Text = "请先选中要修改的音符；也可以把光标停在某个音符后面再点。";
-                return;
-            }
-            length = end - start;
+            editHint.Text = "请先选中要修改的音符；也可以把光标停在某个音符后面再点。";
+            return;
         }
+        int length = end - start;
 
         string selected = whole.Substring(start, length);
         var result = transform(selected);
@@ -490,7 +577,7 @@ public sealed partial class PlayerWindow : Window
             new TextBlock { Text = "曲名（与文件名独立）：", Margin = new Thickness(0, 0, 0, 4) }, songTitle,
             documentInfo, documentWarning,
             new TextBlock { Text = "谱面（TXT → 单音简谱）", Margin = new Thickness(0, 10, 0, 6), Foreground = Muted },
-            BuildScoreTools(), score,
+            BuildScoreTools(), BuildScoreArea(),
             Row("速度（BPM）：", bpm),
             Row("音符间隔／留白(ms)：", gap),
             new TextBlock { Text = "解析预览（每个音的拍数和时间；不是图片识谱）", Margin = new Thickness(0, 8, 0, 4), Foreground = Muted }, preview));

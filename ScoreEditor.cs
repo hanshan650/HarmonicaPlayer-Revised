@@ -93,6 +93,23 @@ public static class ScoreEditor
         return false;
     }
 
+    /// 「编辑按钮实际会改动的范围」：有选区就用选区，没有选区就用光标左侧那个音符。
+    /// 界面上的高亮框和改写动作都调用这一个函数，所以框住的就一定是会被改的那一段。
+    public static bool TryGetTargetRange(string text, int selectionStart, int selectionLength, out int start, out int end)
+    {
+        start = end = 0;
+        int from = Math.Clamp(selectionStart, 0, text.Length);
+        if (selectionLength > 0)
+        {
+            int to = Math.Clamp(from + selectionLength, 0, text.Length);
+            if (to <= from) return false;
+            start = from;
+            end = to;
+            return true;
+        }
+        return TryExpandCaret(text, from, out start, out end);
+    }
+
     // ---------- 音符单元扫描 ----------
 
     private readonly record struct Part(int Start, int End, bool IsNote,

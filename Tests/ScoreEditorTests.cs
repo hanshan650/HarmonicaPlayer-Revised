@@ -105,6 +105,28 @@ static class ScoreEditorTests
         Check(ScoreEditor.TryExpandCaret("1 2_ 3", 6, out int s3, out int e3) && s3 == 5 && e3 == 6, "行尾音符");
         Check(!ScoreEditor.TryExpandCaret("1 2", 2, out _, out _), "光标悬在音符之前时不猜目标");
 
+        // ---------- 目标范围（界面高亮框与改写动作共用同一个函数，必须完全一致） ----------
+        Check(ScoreEditor.TryGetTargetRange("1 2_ 3", 1, 0, out int t1, out int t2) && t1 == 0 && t2 == 1,
+            "无选区时目标为光标左侧音符");
+        Check(ScoreEditor.TryGetTargetRange("1 2_ 3", 6, 0, out int t3, out int t4) && t3 == 5 && t4 == 6,
+            "行尾音符");
+        Check(ScoreEditor.TryGetTargetRange("1 2_ 3", 2, 5, out int t5, out int t6) && t5 == 2 && t6 == 6,
+            "有选区时目标就是选区本身");
+        Check(ScoreEditor.TryGetTargetRange("1 2_", 0, 4, out int t7, out int t8) && t7 == 0 && t8 == 4,
+            "整段选区");
+        Check(!ScoreEditor.TryGetTargetRange("1 2", 2, 0, out _, out _),
+            "光标夹在两个音符之间时不猜目标（与按钮行为一致）");
+        Check(!ScoreEditor.TryGetTargetRange("", 0, 0, out _, out _), "空谱面无目标");
+        Check(ScoreEditor.TryGetTargetRange("1 2 3", 999, 0, out int t9, out int t10) && t9 == 4 && t10 == 5,
+            "越界光标被夹回文本末尾");
+        // 目标范围必须能直接切出合法单元——这是「高亮框住的一定会被改对」的硬约束。
+        foreach (var (text, caret) in new[] { ("1 2_ 3", 1), ("1 2_ 3", 4), ("#1 【2】.", 4), ("【【1】】:1.25", 11) })
+        {
+            Check(ScoreEditor.TryGetTargetRange(text, caret, 0, out int a, out int b) &&
+                  ScoreEditor.ApplyPitch(text[a..b], ScoreEditor.Pitch.OctaveDown).Changed == 1,
+                $"目标单元可被按钮直接改写：{text[a..b]}");
+        }
+
         Console.WriteLine($"PASS: ScoreEditor {count} tests");
     }
 }
