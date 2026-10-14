@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HarmonicaPlayer-Revised — 三角洲行动口琴自动演奏工具</title>
+<meta name="description" content="在《三角洲行动》里自动演奏口琴的 Windows 桌面工具：简谱转游戏按键，支持 MIDI/JSON/TXT 曲谱导入、音轨选择、真实口琴采样试听与标准 MIDI 导出。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305070a'/%3E%3Crect x='5' y='11' width='22' height='10' rx='3' fill='none' stroke='%2322d3ee' stroke-width='2'/%3E%3Ccircle cx='11' cy='16' r='2' fill='%2322d3ee'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%238b5cf6'/%3E%3Ccircle cx='21' cy='16' r='2' fill='%2322d3ee'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow glow-1" aria-hidden="true"></div>
+<div class="bg-glow glow-2" aria-hidden="true"></div>
+<div class="bg-glow glow-3" aria-hidden="true"></div>
+
+<header class="nav" id="top">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26">
+          <rect x="3" y="10" width="26" height="12" rx="3.5" fill="none" stroke="url(#bg1)" stroke-width="2"/>
+          <circle cx="10" cy="16" r="2.1" fill="#22d3ee"/>
+          <circle cx="16" cy="16" r="2.1" fill="#8b5cf6"/>
+          <circle cx="22" cy="16" r="2.1" fill="#22d3ee"/>
+          <defs>
+            <linearGradient id="bg1" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+      <span class="brand-text">Harmonica<b>Player</b></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#features">功能</a>
+      <a href="#preview">界面</a>
+      <a href="#start">使用</a>
+      <a href="#syntax">音符规则</a>
+      <a href="#notice">声明</a>
+    </nav>
+    <a class="btn btn-ghost nav-cta" href="https://github.com/hanshan650/HarmonicaPlayer-Revised" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-badge reveal">
+        <span class="dot"></span>Windows 桌面工具 · C# / .NET 8 · 自包含单文件 · 运行时不联网
+      </div>
+
+      <h1 class="hero-title reveal">
+        <span class="grad">HarmonicaPlayer</span><span class="hero-rev">-Revised</span>
+      </h1>
+
+      <p class="hero-sub reveal">
+        把简谱（数字谱）转成《三角洲行动》里的口琴按键演奏。<br>
+        还能编辑与保存 TXT 简谱、导入 MIDI / JSON 曲谱、用真实口琴采样本地试听、导出标准 MIDI。
+      </p>
+
+      <div class="hero-cta reveal">
+        <a class="btn btn-primary" href="https://github.com/hanshan650/HarmonicaPlayer-Revised/releases" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M7.25 1.5a.75.75 0 0 1 1.5 0v6.69l1.97-1.97a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 1.06-1.06l1.97 1.97V1.5z"/><path d="M2 11.75a.75.75 0 0 1 1.5 0v1.5c0 .14.11.25.25.25h8.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-1.5z"/></svg>
+          下载最新版
+        </a>
+        <a class="btn btn-outline" href="https://github.com/hanshan650/HarmonicaPlayer-Revised" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          查看源码
+        </a>
+      </div>
+
+      <div class="stats reveal">
+        <div class="stat"><b>60+</b><span>内置曲谱（TXT / MIDI / JSON）</span></div>
+        <div class="stat"><b>3</b><span>导入格式：MIDI / JSON / TXT</span></div>
+        <div class="stat"><b>1</b><span>自包含单文件 EXE，免装 .NET</span></div>
+        <div class="stat"><b>0</b><span>运行时网络请求</span></div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <figure class="window reveal" id="preview">
+        <div class="window-bar">
+          <span class="wdots"><i></i><i></i><i></i></span>
+          <span class="window-title">口琴简谱播放器 — 曲库与演奏面板</span>
+          <span class="window-tag">Windows · WinForms</span>
+        </div>
+        <div class="window-shot shot-main">
+          <img src="assets/ui-main.png" alt="HarmonicaPlayer-Revised 主界面：左侧曲库侧栏，右侧演奏 / 曲谱文件 / 本机试听 / 曲谱编辑卡片">
+        </div>
+        <figcaption class="window-cap">实际界面：左侧曲库侧栏（选中即导入），右侧按功能分区卡片；中间竖条可拖动调整栏宽。</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <p class="eyebrow">FEATURES</p>
+      <h2 class="section-title">为<em>多轨曲谱</em>与批量曲库而做的几处关键改动</h2>
+      <p class="section-lead">在原作者 v0.3.3 的基础上重写了导入链路与主界面；以下是相对上游的主要能力。</p>
+
+      <div class="grid grid-3">
+        <article class="card reveal">
+          <div class="card-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18.5" cy="17.5" r="2.5"/></svg>
+          </div>
+          <h3>曲库侧栏</h3>
+          <p>启动自动读取 EXE 同目录的 <code>简谱\TXT</code>、<code>简谱\MIDI</code>、<code>简谱\JSON</code>，按曲名列出一首首曲谱；<b>选中即导入</b>，顶部可筛选、底部可刷新。</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><path d="M17 15l2 2 3-3.5"/></svg>
+          </div>
+          <h3>音轨选择</h3>
+          <p>多音轨曲谱（MIDI / JSON）导入时弹窗列出每条音轨（编号、名称、音数、音域、平均音长、同时发声音数）；导入后可用「演奏音轨」下拉框随时换轨，不必重新导入。</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path d="M13 9h5M13 13h5"/></svg>
+          </div>
+          <h3>重做的主界面</h3>
+          <p>左右两栏 + 功能卡片（演奏／曲谱文件／本机试听／曲谱编辑／快捷键与设置）；<b>中间竖条可左右拖动</b>调整曲库栏宽度，窗口可自由缩放。</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14v7"/><path d="M8 21h8"/><path d="M4 14l-1.5 1.5M20 14l1.5 1.5"/></svg>
+          </div>
+          <h3>真实口琴采样试听</h3>
+          <p>内置 Hohner Special 20 真实口琴采样；从头或从光标试听、当前音符高亮、音量 0～100%（默认 60%）。试听不发送游戏按键。</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 21h16"/></svg>
+          </div>
+          <h3>标准 MIDI 导出</h3>
+          <p>导出 Format 0、单轨、9600 PPQ、固定速度、GM 口琴音色（22 号）、力度 96；先写临时文件再替换，失败保留原目标。</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.5 6 .7-4.5 4 1.3 5.9L12 16.2 6.7 19.1 8 13.2 3.5 9.2l6-.7z"/></svg>
+          </div>
+          <h3>游戏内自动演奏</h3>
+          <p>3 秒倒计时后向目标窗口发送键鼠；默认开始 <kbd>F6</kbd>、停止 <kbd>F8</kbd>，可自定义。支持「仅日志测试」先干跑一遍。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="detail">
+    <div class="wrap split">
+      <div class="split-text reveal">
+        <p class="eyebrow">LIBRARY</p>
+        <h2 class="section-title">曲库即开即用，<em>选中即导入</em></h2>
+        <p>把曲谱丢进 <code>简谱\TXT</code> / <code>简谱\MIDI</code> / <code>简谱\JSON</code>，启动后左侧自动列出；也可以继续用「导入 TXT / MIDI / JSON」手动导入。</p>
+        <ul class="ticks">
+          <li>导入 / 导出对话框自动定位到对应分类子目录</li>
+          <li>兼容 ANSI / GBK 旧编码的纯音符 TXT，并提示建议另存为 UTF-8</li>
+          <li>高音可写半角 <code>[3]</code>（等同 <code>【3】</code>），AI 转来的谱不会因方括号打不开</li>
+          <li>「仅日志测试」勾选时展开日志栏，准备实际演奏时自动收起</li>
+        </ul>
+      </div>
+      <figure class="window window-sm reveal">
+        <div class="window-bar">
+          <span class="wdots"><i></i><i></i><i></i></span>
+          <span class="window-title">曲库侧栏</span>
+        </div>
+        <div class="window-shot">
+          <img src="assets/ui-library.png" alt="曲库侧栏列出多首 TXT / MIDI / JSON 曲谱，选中即导入">
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="start">
+    <div class="wrap">
+      <p class="eyebrow">GETTING STARTED</p>
+      <h2 class="section-title">下载到演奏，<em>六步</em></h2>
+
+      <ol class="steps">
+        <li class="reveal"><span class="step-n">01</span><div><h3>下载</h3><p>到 Releases 下载 <code>HarmonicaPlayer-Revised-vX.Y-win-x64.zip</code>。</p></div></li>
+        <li class="reveal"><span class="step-n">02</span><div><h3>完整解压</h3><p>解压到一个普通文件夹，不要在压缩包里直接双击 EXE（否则同目录的「简谱」会丢）。程序是自包含单文件，<b>不需要安装 .NET，也不联网</b>。</p></div></li>
+        <li class="reveal"><span class="step-n">03</span><div><h3>双击运行</h3><p>首次可能提示「未知发布者」（未做代码签名），点「更多信息」→「仍要运行」；杀毒误报时把所在文件夹加入白名单。设置写在 <code>%LOCALAPPDATA%\HarmonicaPlayer\settings.json</code>。</p></div></li>
+        <li class="reveal"><span class="step-n">04</span><div><h3>放曲谱</h3><p>把曲谱放进 EXE 同目录的 <code>简谱\TXT</code> / <code>MIDI</code> / <code>JSON</code>，启动后左侧曲库自动列出，点一首即导入。</p></div></li>
+        <li class="reveal"><span class="step-n">05</span><div><h3>先本机试听</h3><p>用「从头试听 / 从光标试听」核对旋律与速度，确认无误再上游戏。</p></div></li>
+        <li class="reveal"><span class="step-n">06</span><div><h3>游戏内演奏</h3><p>取消「仅日志测试」→ 游戏里取出口琴 → 按开始键（默认 <kbd>F6</kbd>）→ 3 秒倒计时内切回游戏；停止键默认 <kbd>F8</kbd>。权限建议与游戏匹配，游戏建议无边框窗口；演奏期间除停止键外不要操作键鼠。</p></div></li>
+      </ol>
+
+      <div class="callout reveal">
+        <b>发布包里还带了一份 <code>首次运行说明.txt</code></b>，可以直接连压缩包一起发给使用者。
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="syntax">
+    <div class="wrap">
+      <p class="eyebrow">NOTATION</p>
+      <h2 class="section-title">音符规则，<em>一行一个写法</em></h2>
+      <p class="section-lead">TXT 曲谱沿用 <code>HarmonicaPlayer/1</code>，旧纯音符 TXT 仍可导入。文件名可写「歌名 bpm100.txt」等多种形式。</p>
+
+      <div class="split split-2">
+        <div class="table-wrap reveal">
+          <table class="tbl">
+            <thead><tr><th>写法</th><th>含义</th></tr></thead>
+            <tbody>
+              <tr><td><code>1～7</code></td><td>中音，一拍</td></tr>
+              <tr><td><code>【1】～【7】</code></td><td>高一个八度</td></tr>
+              <tr><td><code>（1）</code> 或 <code>(1)</code></td><td>低一个八度</td></tr>
+              <tr><td><code>【【1】】</code></td><td>高两个八度 do，仅此音</td></tr>
+              <tr><td><code>#1</code>、<code>【#1】</code></td><td>升半音</td></tr>
+              <tr><td><code>0</code></td><td>休止一拍</td></tr>
+              <tr><td><code>5_</code>、<code>5__</code></td><td>半拍、四分之一拍</td></tr>
+              <tr><td><code>5.</code>、<code>5_.</code></td><td>1.5 拍、0.75 拍</td></tr>
+              <tr><td><code>5 —</code>、<code>0 —</code></td><td>增加一拍</td></tr>
+              <tr><td><code>5:1.25</code></td><td>同一个音总共持续 1.25 拍</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reveal">
+          <div class="code">
+            <div class="code-bar"><i></i><i></i><i></i><span>节奏示例.txt</span></div>
+<pre><code><span class="c-k">@format</span>=<span class="c-v">HarmonicaPlayer/1</span>
+<span class="c-k">@title</span>=<span class="c-v">节奏示例</span>
+<span class="c-k">@bpm</span>=<span class="c-v">120</span>
+<span class="c-k">@gap</span>=<span class="c-v">20</span>
+
+<span class="c-n">1 2_ 3_ 5 — |</span>
+<span class="c-n">0 6. 5_ 1 |</span></code></pre>
+          </div>
+          <ul class="ticks small">
+            <li>音高：中音 1 = C4（MIDI 60），低音 1 = C3，高音 1 = C5，最高 do = C6；不按原谱调号自动移调。</li>
+            <li>试听、MIDI 与游戏演奏的拍点和总时长一致（游戏按住时间额外少 12ms 准备量）。</li>
+            <li>扣除 12ms 准备与间隔后至少按住 40ms；不足时提示区给出建议（减少间隔或降速），不再自动整曲降速。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="notice">
+    <div class="wrap">
+      <p class="eyebrow">ATTRIBUTION</p>
+      <h2 class="section-title">来源与<em>版权声明</em></h2>
+      <div class="notice reveal">
+        <p>本项目基于原作者
+          <a href="https://github.com/lanselanlanxi-wq/HarmonicaPlayer" target="_blank" rel="noopener">lanselanlanxi-wq/HarmonicaPlayer</a>
+          修改而来（基线 v0.3.3，<code>212316e</code>），新增了 MIDI / JSON 导入、音轨选择、曲库侧栏与新界面等功能。
+          <b>原代码版权归原作者</b>，本项目不是官方版本。</p>
+        <p>逐项修改内容、许可与版权说明见仓库中的
+          <a href="https://github.com/hanshan650/HarmonicaPlayer-Revised/blob/main/NOTICE.md" target="_blank" rel="noopener">NOTICE.md</a>，
+          贡献来源与采纳范围见
+          <a href="https://github.com/hanshan650/HarmonicaPlayer-Revised/blob/main/CONTRIBUTIONS.md" target="_blank" rel="noopener">CONTRIBUTIONS.md</a>。</p>
+        <p class="notice-warn">发布包内附带的曲谱为他人音乐作品的转谱，版权归各自原作者 / 转谱者，仅供个人学习与演奏使用，请勿用于商业用途。</p>
+      </div>
+
+      <div class="grid grid-4 docs">
+        <a class="doc" href="https://github.com/hanshan650/HarmonicaPlayer-Revised/blob/main/README.md" target="_blank" rel="noopener"><b>README</b><span>项目总览</span></a>
+        <a class="doc" href="https://github.com/hanshan650/HarmonicaPlayer-Revised/blob/main/NOTICE.md" target="_blank" rel="noopener"><b>NOTICE</b><span>来源与修改声明</span></a>
+        <a class="doc" href="https://github.com/hanshan650/HarmonicaPlayer-Revised/releases" target="_blank" rel="noopener"><b>Releases</b><span>下载各版本</span></a>
+        <a class="doc" href="https://github.com/hanshan650/HarmonicaPlayer-Revised" target="_blank" rel="noopener"><b>Repository</b><span>完整源码</span></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="brand-text">Harmonica<b>Player</b></span>
+      <span class="footer-sub">三角洲行动 口琴自动演奏工具 · 非官方修改版</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/hanshan650/HarmonicaPlayer-Revised" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/hanshan650/HarmonicaPlayer-Revised/releases" target="_blank" rel="noopener">Releases</a>
+      <a href="https://github.com/lanselanlanxi-wq/HarmonicaPlayer" target="_blank" rel="noopener">上游原项目</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
