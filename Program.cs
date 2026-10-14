@@ -90,6 +90,10 @@ public sealed partial class PlayerWindow : Window
     private readonly Button import = new() { Content = "导入 TXT", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
     private readonly Button importMidi = new() { Content = "导入 MIDI", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
     private readonly Button importJson = new() { Content = "导入 JSON", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
+    // 音频转谱：可选附加组件，环境不在时不报错，只给安装提示。
+    private readonly Button audioToScore = new() { Content = "音频转谱", Margin = new Thickness(5), Padding = new Thickness(15, 6, 15, 6) };
+    private string? audioToScoreRoot;
+    private CancellationTokenSource? audioToScoreCancel;
     private readonly TextBox bpm = new() { Text = "120", Width = 75 };
     private readonly TextBox preview = new() { IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, Height = 130, VerticalContentAlignment = VerticalAlignment.Top, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     private readonly Button refresh = new() { Content = "预览 / 检查", Margin = new Thickness(5), Padding = new Thickness(12, 6, 12, 6) };
@@ -565,6 +569,7 @@ public sealed partial class PlayerWindow : Window
         UpdateLogVisibility();
         var importRow = new WrapPanel { Orientation = Orientation.Horizontal };
         importRow.Children.Add(import); importRow.Children.Add(importMidi); importRow.Children.Add(importJson);
+        importRow.Children.Add(audioToScore);
         var fileRow = new WrapPanel { Orientation = Orientation.Horizontal };
         fileRow.Children.Add(newScore); fileRow.Children.Add(saveScore); fileRow.Children.Add(saveAs);
         trackGroup.Children.Add(new TextBlock { Text = "演奏音轨（多音轨曲谱导入后可随时切换）：", TextWrapping = TextWrapping.Wrap });
@@ -585,7 +590,7 @@ public sealed partial class PlayerWindow : Window
         shortcuts.Children.Add(configure); shortcuts.Children.Add(retry);
         panel.Children.Add(Card("快捷键与设置", shortcuts, hotkeyStatus, settingsStatus));
         StyleButton(start, primary: true); StyleButton(stop, danger: true); StyleButton(refresh);
-        StyleButton(import); StyleButton(importMidi); StyleButton(importJson);
+        StyleButton(import); StyleButton(importMidi); StyleButton(importJson); StyleButton(audioToScore);
         StyleButton(newScore); StyleButton(saveScore); StyleButton(saveAs); StyleButton(configure); StyleButton(retry);
         settings = SettingsStore.Load(settingsPath, out var loadWarning);
         settingsWriter = new SettingsWriter(writeSettings ?? (value => SettingsStore.Save(settingsPath, value)),
@@ -600,6 +605,7 @@ public sealed partial class PlayerWindow : Window
         import.Click += async (_, _) => await Import(); start.Click += async (_, _) => await Begin();
         importMidi.Click += async (_, _) => await ImportMidi();
         importJson.Click += async (_, _) => await ImportJson();
+        audioToScore.Click += async (_, _) => await RunAudioToScore();
         trackChoice.SelectionChanged += async (_, _) => await SwitchTrack();
         saveScore.Click += async (_, _) => await DocumentOperation(() => SaveScoreAsync(false));
         saveAs.Click += async (_, _) => await DocumentOperation(() => SaveScoreAsync(true));
@@ -634,6 +640,13 @@ public sealed partial class PlayerWindow : Window
             if (allowClose) return;
             e.Cancel = true;
             if (closing) return;
+            // 转谱可能跑好几分钟：先让进程停下来，再告诉用户稍后重试关闭。
+            if (audioToScoreCancel is { } transcribing && documentBusy)
+            {
+                transcribing.Cancel();
+                ReportIssue("正在停止音频转谱，请稍候再关闭窗口。");
+                return;
+            }
             if (documentBusy) { ReportIssue("正在读写曲谱，请完成后再关闭。"); return; }
             closing = true;
             saveTimer.Stop(); previewTimer.Stop();
@@ -798,7 +811,11 @@ public sealed partial class PlayerWindow : Window
     private Task LoadMidi(string? path) => DocumentOperation(async () =>
     {
         path ??= scoreDialogs.OpenMidi(this);
-        if (path == null) return false;
+        return path != null && await ImportMidiFile(path);
+    });
+    // 音频转谱产出的也是 MIDI，所以直接复用这条导入路径；所以拆出来给两处共用。
+    private async Task<bool> ImportMidiFile(string path)
+    {
         // 多轨 MIDI 同样先选一条要演奏的轨道（默认音符最多的一条）。
         var tracks = await Task.Run(() => MidiImporter.ReadTracks(path));
         int? index = null;
@@ -817,7 +834,114 @@ public sealed partial class PlayerWindow : Window
         status.Text = Imported(result.LoweredFromBpm, "MIDI");
         SelectLibraryFile(path);
         return true;
+    }
+    // 音频转谱：可选附加组件（SheetSage2）。环境不在时只给安装指引，不当作程序故障。
+    private Task RunAudioToScore() => DocumentOperation(async () =>
+    {
+        if (!TryLocateAudioToScore(out string root, out string reason))
+        {
+            ReportIssue("音频转谱环境不可用：" + reason + "\n\n" + AudioToScore.SetupHint(AppContext.BaseDirectory));
+            return false;
+        }
+
+        string? audio = scoreDialogs.OpenAudio(this);
+        if (audio == null) return false;
+
+        string stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+        string outDir = Path.Combine(root, "out", SafeName(Path.GetFileNameWithoutExtension(audio)) + "-" + stamp);
+        status.Text = $"音频转谱：正在启动…（{Path.GetFileName(audio)}）";
+        log.AppendText($"=== 音频转谱 {DateTime.Now:yyyy-MM-dd HH:mm:ss}  {Path.GetFileName(audio)} ===\n");
+        var cts = new CancellationTokenSource();
+        audioToScoreCancel = cts;
+        try
+        {
+            void Report(int percent, string text) => Dispatcher.Invoke(() =>
+            {
+                status.Text = $"音频转谱：{percent}% {text}";
+                if (text.Length > 0) { log.AppendText($"{percent}%  {text}\n"); log.ScrollToEnd(); }
+            });
+            void FromSidecar(string line) => Dispatcher.Invoke(() =>
+            {
+                log.AppendText(line + "\n");
+                log.ScrollToEnd();
+            });
+
+            var result = await AudioToScore.RunAsync(root, audio, outDir, Report, FromSidecar, cts.Token);
+            if (result.Summary is not { } summary)
+            {
+                ReportIssue("音频转谱失败：\n" + Tail(result.Tail, 8));
+                status.Text = "音频转谱失败，详情见上方提示。";
+                return false;
+            }
+
+            string head = $"音频转谱完成：{summary.DurationSec / 60:0.0} 分钟音频用 {summary.ElapsedSec:0} 秒"
+                + $"（约 {summary.RealtimeFactor:0.#} 倍速，{summary.DeviceName}）"
+                + $"；{summary.TrackLabel} {summary.MelodyNotes} 个音"
+                + (summary.PeakVramMib > 0 ? $"，显存峰值 {summary.PeakVramMib} MB" : "") + "。";
+            status.Text = head + " 正在导入…";
+            log.AppendText(head + "\n");
+            log.AppendText($"结果目录：{summary.OutDir}\n");
+
+            if (!await ImportMidiFile(summary.MelodyFile)) return false;
+
+            // 导入流程会把提示条写成 MIDI 导入的警告，这里把转谱自身的warning并进去。
+            // ABC 记谱失败不当警告显示：本程序只吃 MIDI，ABC 是模型的附带产物，
+            // 而且它的报错文案（如 "non-consecutive beat IDs [1, 2, 4]"）对使用者没有意义。
+            if (summary.AbcError != null) log.AppendText($"（模型的 ABC 记谱未生成：{summary.AbcError}）\n");
+            if (summary.Warnings.Count > 0) SetDocumentWarning(string.Join("\n", summary.Warnings));
+            status.Text = head;
+            return true;
+        }
+        catch (OperationCanceledException)
+        {
+            status.Text = "音频转谱已取消。";
+            return false;
+        }
+        finally
+        {
+            cts.Dispose();
+            if (ReferenceEquals(audioToScoreCancel, cts)) audioToScoreCancel = null;
+        }
     });
+
+    private static string SafeName(string name) =>
+        string.Concat(name.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c));
+
+    private static string Tail(string text, int lines)
+    {
+        var all = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        return string.Join("\n", all.Length <= lines ? all : all[^lines..]).Trim();
+    }
+
+    // 找到环境就顺手记进设置，下次不用再找。
+    private bool TryLocateAudioToScore(out string root, out string reason)
+    {
+        if (AudioToScore.TryLocate(AppContext.BaseDirectory, settings.AudioToScoreRoot, out root, out reason, out _))
+        {
+            RememberAudioToScoreRoot(root);
+            return true;
+        }
+        // 没找到就请用户指认一次；指认对了就记住。
+        string? picked = scoreDialogs.OpenFolder(this,
+            "选择「音频转谱」附加组件目录（里面应有 venv、models 与 transcribe.py）");
+        if (picked == null) return false;
+        string why = AudioToScore.Describe(picked);
+        if (why.Length > 0) { root = picked; reason = why; return false; }
+        root = picked;
+        RememberAudioToScoreRoot(picked);
+        reason = "";
+        return true;
+    }
+
+    private void RememberAudioToScoreRoot(string root)
+    {
+        if (audioToScoreRoot == root) return;
+        audioToScoreRoot = root;
+        if (settings.AudioToScoreRoot == root) return;
+        settings = settings with { AudioToScoreRoot = root };
+        QueueSave();
+    }
+
     private Task ImportJson() => LoadJson(null);
     private Task LoadJson(string? path) => DocumentOperation(async () =>
     {
@@ -1114,6 +1238,7 @@ public sealed partial class PlayerWindow : Window
         busy |= closing || documentBusy;
         uiBusy = busy;
         import.IsEnabled = importMidi.IsEnabled = importJson.IsEnabled = refresh.IsEnabled = gap.IsEnabled = dry.IsEnabled = !busy;
+        audioToScore.IsEnabled = !busy;
         bpm.IsEnabled = !busy;
         trackChoice.IsEnabled = !busy && trackSource != null;
         configure.IsEnabled = retry.IsEnabled = !busy;

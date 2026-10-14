@@ -10,6 +10,9 @@ public interface IScoreDialogs
     string? Open(Window owner);
     string? OpenMidi(Window owner) => new ScoreDialogs().OpenMidi(owner);
     string? OpenJson(Window owner) => new ScoreDialogs().OpenJson(owner);
+    // 音频转谱的输入音频，以及指认附加组件环境目录。
+    string? OpenAudio(Window owner) => new ScoreDialogs().OpenAudio(owner);
+    string? OpenFolder(Window owner, string title) => new ScoreDialogs().OpenFolder(owner, title);
     string? Save(Window owner, string suggestedName);
     MessageBoxResult Unsaved(Window owner);
     string? SaveMidi(Window owner, string suggestedName) => new ScoreDialogs().SaveMidi(owner, suggestedName);
@@ -39,6 +42,23 @@ public sealed class ScoreDialogs : IScoreDialogs
     public string? Open(Window owner) => Choose(owner, "TXT 简谱|*.txt", TextCategory);
     public string? OpenMidi(Window owner) => Choose(owner, "MIDI 文件|*.mid;*.midi", MidiCategory);
     public string? OpenJson(Window owner) => Choose(owner, "JSON 曲谱|*.json", JsonCategory);
+
+    // 音频不进 简谱 目录，最后一次用过哪儿就默认开哪儿由系统自己记。
+    public string? OpenAudio(Window owner)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = "音频文件|*.mp3;*.wav;*.flac;*.ogg;*.m4a;*.aac;*.wma|所有文件|*.*",
+            Title = "选择要转成简谱的音频"
+        };
+        return dialog.ShowDialog(owner) == true ? dialog.FileName : null;
+    }
+
+    public string? OpenFolder(Window owner, string title)
+    {
+        var dialog = new OpenFolderDialog { Title = title };
+        return dialog.ShowDialog(owner) == true ? dialog.FolderName : null;
+    }
     public string? Save(Window owner, string suggestedName)
         => SaveTo(owner, "TXT 简谱|*.txt", ".txt", TextCategory, suggestedName);
     public string? SaveMidi(Window owner, string suggestedName)

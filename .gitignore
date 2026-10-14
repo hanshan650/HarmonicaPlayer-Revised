@@ -9,3 +9,8 @@ archive/
 CHANGELOG.md
 UPDATE-*.md
 VALIDATION-*.md
+
+# 「音频转谱」附加组件的运行目录（模型与环境约 5.5 GB，不进仓库）
+AudioToScore-runtime/
+音频转谱/
+extras/audio-to-score/*.log

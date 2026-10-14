@@ -10,6 +10,8 @@ public sealed record AppSettings
     public int Bpm { get; init; } = 120;
     public int Gap { get; init; } = 20;
     public int PreviewVolume { get; init; } = 60;
+    // 「音频转谱」附加组件的环境目录。附加组件不随分发包提供，找到过一次就记下来。
+    public string? AudioToScoreRoot { get; init; }
 
     public void Validate()
     {
