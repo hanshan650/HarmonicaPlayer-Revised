@@ -12,7 +12,7 @@ public sealed class TrackDialog : Window
         Title = "选择要演奏的音轨"; Width = 600; SizeToContent = SizeToContent.Height;
         ResizeMode = ResizeMode.NoResize; WindowStartupLocation = WindowStartupLocation.CenterOwner;
         var panel = new StackPanel { Margin = new Thickness(18) };
-        Content = panel;
+        Content = Chrome.AttachDialog(this, "选择要演奏的音轨", panel);
         panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.Wrap,
             Text = "这首曲谱有多条音轨（分声部编排，例如主旋律、伴奏、不同演奏者）。软件每次只演奏一条，"
                  + "默认是编号最小的一条——通常就是主旋律。请用“本机试听”确认旋律是否正确；选错时可以重新导入换选。" });

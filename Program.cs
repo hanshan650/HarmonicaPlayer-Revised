@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Threading;
 
 namespace HarmonicaPlayer;
@@ -43,11 +44,14 @@ public sealed partial class PlayerWindow : Window
     private (string Title, string Bpm, string Body, string Gap) cleanDocument;
     private long saveGeneration;
     private bool DocumentDirty => cleanDocument != (songTitle.Text, bpm.Text, score.Text, gap.Text);
+    // 自绘标题栏里的曲名（无边框后系统标题栏不可见；Title 仍保留给任务栏使用）。
+    private readonly TextBlock chromeTitle = new();
     private void UpdateDocumentTitle()
     {
         Title = $"口琴简谱播放器 {VersionLabel} — {songTitle.Text}{(DocumentDirty ? " *" : "")}";
         documentInfo.Text = documentPath ?? "尚未保存";
         documentInfo.ToolTip = documentPath;
+        chromeTitle.Text = $"{songTitle.Text}{(DocumentDirty ? " *" : "")}";
     }
     private void MarkDocumentClean() { cleanDocument = (songTitle.Text, bpm.Text, score.Text, gap.Text); UpdateDocumentTitle(); }
     // 导入/保存的提示条：没有内容时整条收起，避免留下一根空色带占位。
@@ -89,45 +93,104 @@ public sealed partial class PlayerWindow : Window
     private sealed record LibraryEntry(string Path, string Kind, string Title);
 
     // 统一配色与间距（深色科技风；控件模板见 DarkTheme.cs）。
+    // 视觉手法参考 wu.wujidj.cn：近黑底 + 环境辉光、胶囊按钮 + 同色辉光、渐变标题、
+    // 卡片微渐变 + 悬停上浮。主色仍用原来的青，只借用它的表达方式。
     private static readonly Brush Accent = new SolidColorBrush(Color.FromRgb(0x22, 0xD3, 0xEE));   // 主色：青
     private static readonly Brush AccentInk = new SolidColorBrush(Color.FromRgb(0x04, 0x1E, 0x26)); // 主色按钮上的深色字
+    private static readonly Brush AccentSoft = new SolidColorBrush(Color.FromArgb(0x24, 0x22, 0xD3, 0xEE));
+    private static readonly Brush AccentLine = new SolidColorBrush(Color.FromArgb(0x66, 0x22, 0xD3, 0xEE));
     private static readonly Brush Danger = new SolidColorBrush(Color.FromRgb(0xE1, 0x4D, 0x63));
     private static readonly Brush Page = new SolidColorBrush(Color.FromRgb(0x0A, 0x0E, 0x13));     // 窗口底
-    private static readonly Brush CardFill = new SolidColorBrush(Color.FromRgb(0x12, 0x18, 0x21)); // 卡片
     private static readonly Brush FieldFill = new SolidColorBrush(Color.FromRgb(0x16, 0x1E, 0x28));// 次级按钮
     private static readonly Brush TextMain = new SolidColorBrush(Color.FromRgb(0xE6, 0xED, 0xF3));
     private static readonly Brush Muted = new SolidColorBrush(Color.FromRgb(0x8B, 0x9A, 0xAB));
     private static readonly Brush Line = new SolidColorBrush(Color.FromRgb(0x23, 0x2F, 0x3D));
+    private static readonly Brush Line2 = new SolidColorBrush(Color.FromRgb(0x2F, 0x3E, 0x50));     // 悬停时的描边
+
+    // 主色/危险色/卡片底/标题都用渐变，避免大片纯色显得平。
+    private static readonly LinearGradientBrush AccentGrad = Grad(0x22, 0xD3, 0xEE, 0x5E, 0xEA, 0xD4);
+    private static readonly LinearGradientBrush DangerGrad = Grad(0xE1, 0x4D, 0x63, 0xC3, 0x34, 0x50);
+    private static readonly LinearGradientBrush CardGrad = Grad(0x18, 0x20, 0x2B, 0x0F, 0x16, 0x1E, vertical: true);
+    private static readonly LinearGradientBrush TitleGrad = Grad(0xF2, 0xFB, 0xFF, 0x22, 0xD3, 0xEE);
+
+    private static LinearGradientBrush Grad(byte r1, byte g1, byte b1, byte r2, byte g2, byte b2, bool vertical = false)
+    {
+        var brush = new LinearGradientBrush
+        {
+            StartPoint = new Point(0, 0),
+            EndPoint = vertical ? new Point(0, 1) : new Point(1, 1)
+        };
+        brush.GradientStops.Add(new GradientStop(Color.FromRgb(r1, g1, b1), 0));
+        brush.GradientStops.Add(new GradientStop(Color.FromRgb(r2, g2, b2), 1));
+        brush.Freeze();
+        return brush;
+    }
+
+    // 参考站的按钮都压着一层同色辉光；WPF 里用 ShadowDepth=0 的投影等效。
+    private static DropShadowEffect Glow(Color color, double opacity) =>
+        new() { Color = color, ShadowDepth = 0, BlurRadius = 16, Opacity = opacity };
     private static readonly Brush WarnFill = new SolidColorBrush(Color.FromRgb(0x2A, 0x22, 0x10));
     private static readonly Brush WarnInk = new SolidColorBrush(Color.FromRgb(0xFB, 0xBF, 0x24));
     private static readonly Brush AlertFill = new SolidColorBrush(Color.FromRgb(0x2A, 0x14, 0x18));
     private static readonly Brush AlertInk = new SolidColorBrush(Color.FromRgb(0xFF, 0x9A, 0xA6));
 
-    // 深色卡片：小标题前加一根主色竖条，功能区一眼分得开。
+    // 分区标签做成胶囊（参考站 .lbl 的手法）：主色淡底 + 主色描边 + 主色文字，
+    // 比原来的「竖条 + 粗体标题」更接近参考站的表达。
+    private static Border Pill(string text, double fontSize = 12.5)
+    {
+        var row = new StackPanel { Orientation = Orientation.Horizontal };
+        row.Children.Add(new Border { Width = 3, Height = 13, CornerRadius = new CornerRadius(2),
+            Background = Accent, Margin = new Thickness(0, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center });
+        row.Children.Add(new TextBlock { Text = text, FontWeight = FontWeights.SemiBold, FontSize = fontSize,
+            Foreground = Accent, VerticalAlignment = VerticalAlignment.Center });
+        return new Border
+        {
+            Background = AccentSoft, BorderBrush = AccentLine, BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(999), Padding = new Thickness(10, 3, 13, 4),
+            HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 12), Child = row
+        };
+    }
+
+    // 卡片：小标题用胶囊标签，卡片本身用微渐变底 + 悬停上浮与描边提亮。
     private static Border Card(string title, params UIElement[] content)
     {
         var stack = new StackPanel();
-        var heading = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
-        heading.Children.Add(new Border { Width = 3, Height = 15, CornerRadius = new CornerRadius(2),
-            Background = Accent, Margin = new Thickness(0, 0, 9, 0), VerticalAlignment = VerticalAlignment.Center });
-        heading.Children.Add(new TextBlock { Text = title, FontWeight = FontWeights.Bold, FontSize = 15,
-            Foreground = TextMain, VerticalAlignment = VerticalAlignment.Center });
-        stack.Children.Add(heading);
+        stack.Children.Add(Pill(title));
         foreach (var item in content) stack.Children.Add(item);
-        return new Border { Background = CardFill, BorderBrush = Line, BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(10), Padding = new Thickness(16), Margin = new Thickness(0, 0, 0, 12), Child = stack };
+
+        var card = new Border { Background = CardGrad, BorderBrush = Line, BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(14), Padding = new Thickness(16), Margin = new Thickness(0, 0, 0, 12), Child = stack };
+        var lift = new TranslateTransform();
+        card.RenderTransform = lift;
+        card.MouseEnter += (_, _) => { card.BorderBrush = Line2; lift.Y = -2; };
+        card.MouseLeave += (_, _) => { card.BorderBrush = Line; lift.Y = 0; };
+        return card;
     }
 
     private static void StyleButton(Button button, bool primary = false, bool danger = false)
     {
-        button.Padding = new Thickness(14, 7, 14, 7);
+        button.Padding = new Thickness(16, 7, 16, 7);
         button.Margin = new Thickness(0, 0, 8, 8);
         button.MinWidth = 96;
         button.BorderThickness = new Thickness(1);
-        button.BorderBrush = primary || danger ? Brushes.Transparent : Line;
-        button.Background = primary ? Accent : danger ? Danger : FieldFill;
-        button.Foreground = primary ? AccentInk : danger ? Brushes.White : TextMain;
-        button.FontWeight = primary ? FontWeights.SemiBold : FontWeights.Normal;
+        if (primary || danger)
+        {
+            // 主/危险按钮：胶囊渐变底 + 同色辉光，对应参考站的 .btn-primary。
+            button.BorderBrush = Brushes.Transparent;
+            button.Background = primary ? AccentGrad : DangerGrad;
+            button.Foreground = primary ? AccentInk : Brushes.White;
+            button.FontWeight = FontWeights.SemiBold;
+            button.Effect = Glow(primary ? Color.FromRgb(0x22, 0xD3, 0xEE) : Color.FromRgb(0xE1, 0x4D, 0x63),
+                primary ? 0.42 : 0.34);
+        }
+        else
+        {
+            // 次级按钮：幽灵样式（半透明白底 + 亮一档的描边），对应参考站的 .btn-ghost。
+            button.BorderBrush = Line2;
+            button.Background = FieldFill;
+            button.Foreground = TextMain;
+            button.FontWeight = FontWeights.Normal;
+        }
     }
 
     // 一行“标签 + 输入框”，让速度/间隔这类小输入框对齐。
@@ -139,23 +202,8 @@ public sealed partial class PlayerWindow : Window
         return row;
     }
 
-    // 让系统标题栏也变深色，免得深色界面顶着一根亮色标题栏。
-    // DWMWA_USE_IMMERSIVE_DARK_MODE：Win10 1809 起为 19，Win10 20H1 起为 20。
-    [DllImport("dwmapi.dll", PreserveSig = true)]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
-
-    private static void ApplyDarkTitleBar(IntPtr handle)
-    {
-        if (handle == IntPtr.Zero) return;
-        try
-        {
-            int enabled = 1;
-            if (DwmSetWindowAttribute(handle, 20, ref enabled, sizeof(int)) != 0)
-                DwmSetWindowAttribute(handle, 19, ref enabled, sizeof(int));
-        }
-        catch (DllNotFoundException) { /* 非 Windows 或旧版 dwmapi，忽略。 */ }
-        catch (EntryPointNotFoundException) { }
-    }
+    // 原来这里用 DwmSetWindowAttribute 把「系统标题栏」染成深色。改为无边框自绘标题栏后，
+    // 系统标题栏已不存在，这段逻辑随之作废，一并删除（窗口底色与圆角改由 Chrome.cs 负责）。
 
     private void UpdateAvailability()
     {
@@ -211,6 +259,24 @@ public sealed partial class PlayerWindow : Window
         settingsPath = settingsFile ?? SettingsStore.DefaultPath;
         Title = $"口琴简谱播放器 {VersionLabel}"; Width = 1060; Height = 880; MinWidth = 880; MinHeight = 640;
         Background = Page; Foreground = TextMain; FontFamily = new FontFamily("Microsoft YaHei UI, Segoe UI"); FontSize = 13.5;
+
+        // 去系统边框：拖拽、双击最大化、边缘缩放、贴边仍由系统负责（见 Chrome.cs），
+        // 标题栏与背景辉光改在窗口内自绘。结构是三层：辉光铺满，标题栏一行，内容一行。
+        Chrome.MakeFrameless(this, Chrome.MainBarHeight, resizable: true);
+        Chrome.EnableRoundedCorners(this);
+        chromeTitle.FontSize = 12.5; chromeTitle.Foreground = Muted;
+        chromeTitle.HorizontalAlignment = HorizontalAlignment.Center;
+        chromeTitle.VerticalAlignment = VerticalAlignment.Center;
+        chromeTitle.TextTrimming = TextTrimming.CharacterEllipsis;
+        chromeTitle.Margin = new Thickness(16, 0, 16, 0);
+        var shell = new Grid();
+        shell.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        shell.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        var glow = Chrome.GlowLayer();
+        Grid.SetRowSpan(glow, 2); shell.Children.Add(glow);
+        var titleBar = Chrome.MainBar(this, "口琴简谱播放器", VersionLabel, chromeTitle);
+        Grid.SetRow(titleBar, 0); shell.Children.Add(titleBar);
+
         var panel = new StackPanel { Margin = new Thickness(18) };
         var root = new DockPanel { Margin = new Thickness(8) };
         var fixedHeader = new StackPanel();
@@ -229,7 +295,7 @@ public sealed partial class PlayerWindow : Window
         alertPanel.Children.Add(alertActions); alertBox.Child = alertPanel;
         fixedHeader.Children.Add(alertBox);
         status.FontSize = 19; status.FontWeight = FontWeights.Bold;
-        status.Foreground = Accent;
+        status.Foreground = AccentGrad;
         status.Margin = new Thickness(12, 4, 12, 8);
         fixedHeader.Children.Add(status);
         DockPanel.SetDock(fixedHeader, Dock.Top); root.Children.Add(fixedHeader);
@@ -250,8 +316,11 @@ public sealed partial class PlayerWindow : Window
         Grid.SetColumn(splitter, 1); body.Children.Add(splitter);
         var editorScroll = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Padding = new Thickness(0, 0, 6, 0) };
         Grid.SetColumn(editorScroll, 2); body.Children.Add(editorScroll);
-        root.Children.Add(body); Content = root;
-        panel.Children.Add(new TextBlock { Text = "单音简谱播放器", FontSize = 20, FontWeight = FontWeights.SemiBold });
+        root.Children.Add(body);
+        Grid.SetRow(root, 1); shell.Children.Add(root);
+        Content = shell;
+        panel.Children.Add(new TextBlock { Text = "单音简谱播放器", FontSize = 22, FontWeight = FontWeights.Bold,
+            Foreground = TitleGrad, Margin = new Thickness(0, 0, 0, 2) });
         panel.Children.Add(new TextBlock
         {
             Text = "【高音】 （低音） 【【1】】最高do；5:1.25 指定总拍数；# 升半音；0 休止，-或—延长一拍，_ 半拍，__ 四分之一拍，. 附点。",
@@ -329,7 +398,6 @@ public sealed partial class PlayerWindow : Window
         SourceInitialized += (_, _) =>
         {
             hwnd = new WindowInteropHelper(this).Handle;
-            ApplyDarkTitleBar(hwnd);
             source = HwndSource.FromHwnd(hwnd); source.AddHook(Hook);
             hotkeys = new HotkeyController(new NativeHotkeys(hwnd));
             ApplyHotkeys();
@@ -606,7 +674,8 @@ public sealed partial class PlayerWindow : Window
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var title = new TextBlock { Text = "曲库（自动读取“简谱”文件夹）", FontWeight = FontWeights.Bold, FontSize = 15, TextWrapping = TextWrapping.Wrap };
+        var title = Pill("曲库", 13);
+        title.ToolTip = "自动读取 EXE 同级的“简谱”文件夹：TXT / MIDI / JSON 三种曲谱";
         Grid.SetRow(title, 0); grid.Children.Add(title);
         Grid.SetRow(libraryFilter, 1); grid.Children.Add(libraryFilter);
         // 不再套外层 ScrollViewer：让 ListBox 自己滚动，鼠标停在列表任意位置都能用滚轮。
@@ -630,8 +699,8 @@ public sealed partial class PlayerWindow : Window
         };
         return new Border
         {
-            Background = CardFill, BorderBrush = Line, BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(8), Padding = new Thickness(12), Margin = new Thickness(0, 0, 8, 0), Child = grid
+            Background = CardGrad, BorderBrush = Line, BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(14), Padding = new Thickness(14, 14, 14, 8), Margin = new Thickness(0, 0, 8, 0), Child = grid
         };
     }
 

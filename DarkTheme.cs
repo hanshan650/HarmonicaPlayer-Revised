@@ -32,6 +32,21 @@ internal static class DarkTheme
   <SolidColorBrush x:Key="P.Sel"         Color="#3322D3EE"/>
   <SolidColorBrush x:Key="P.Thumb"       Color="#2C3B4C"/>
   <SolidColorBrush x:Key="P.ThumbHover"  Color="#3E5568"/>
+  <SolidColorBrush x:Key="P.Accent2"     Color="#5EEAD4"/>
+  <SolidColorBrush x:Key="P.AccentSoft"  Color="#2422D3EE"/>
+  <SolidColorBrush x:Key="P.AccentLine"  Color="#6622D3EE"/>
+  <SolidColorBrush x:Key="P.Line2"       Color="#2F3E50"/>
+  <SolidColorBrush x:Key="P.Ghost"       Color="#14FFFFFF"/>
+
+  <!-- 卡片与主色按钮用渐变而非纯色，层次更接近参考站的玻璃质感 -->
+  <LinearGradientBrush x:Key="P.CardGrad" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#18202B" Offset="0"/>
+    <GradientStop Color="#0F161E" Offset="1"/>
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="P.AccentGrad" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#22D3EE" Offset="0"/>
+    <GradientStop Color="#5EEAD4" Offset="1"/>
+  </LinearGradientBrush>
 
   <!-- ===== 滚动条：只保留滑块，去掉系统箭头按钮 ===== -->
   <Style x:Key="ThemeThumb" TargetType="Thumb">
@@ -170,6 +185,30 @@ internal static class DarkTheme
     </Setter>
   </Style>
 
+  <!-- ===== 列表：深色圆角外框。主窗口曲库自己置了透明无边框，所以只影响未定制的列表。 ===== -->
+  <Style TargetType="ListBox">
+    <Setter Property="Background" Value="{StaticResource P.Field}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource P.Line}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
+    <Setter Property="Padding" Value="2"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ListBox">
+          <Border CornerRadius="8" Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}"
+                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+              <ItemsPresenter/>
+            </ScrollViewer>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <!-- ===== 列表项（曲库） ===== -->
   <Style TargetType="ListBoxItem">
     <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
@@ -195,7 +234,7 @@ internal static class DarkTheme
     </Setter>
   </Style>
 
-  <!-- ===== 按钮：悬停用叠加层提亮，主/次/危险三种底色都适用 ===== -->
+  <!-- ===== 按钮：胶囊圆角 + 悬停叠加层提亮，主/次/危险三种底色都适用 ===== -->
   <Style TargetType="Button">
     <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
     <Setter Property="Background" Value="{StaticResource P.CardSoft}"/>
@@ -206,9 +245,9 @@ internal static class DarkTheme
       <Setter.Value>
         <ControlTemplate TargetType="Button">
           <Grid>
-            <Border x:Name="bd" CornerRadius="7" Background="{TemplateBinding Background}"
+            <Border x:Name="bd" CornerRadius="999" Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
-            <Border x:Name="glow" CornerRadius="7" Background="#FFFFFF" Opacity="0"/>
+            <Border x:Name="glow" CornerRadius="999" Background="#FFFFFF" Opacity="0"/>
             <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Grid>
           <ControlTemplate.Triggers>
@@ -223,6 +262,56 @@ internal static class DarkTheme
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Opacity" Value="0.4"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- ===== 窗口按钮：无边框窗口自绘的控制按钮。故意不复用上面的胶囊样式，
+             避免和全局按钮样式耦合（它必须能覆盖为方形悬停块）。 ===== -->
+  <Style x:Key="TitleBarButton" TargetType="Button">
+    <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="7">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="#1EFFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="#3DFFFFFF"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="TitleBarCloseButton" TargetType="Button">
+    <Setter Property="Foreground" Value="{StaticResource P.Text}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="7">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="#E14D63"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="#C33450"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

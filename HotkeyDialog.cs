@@ -15,7 +15,8 @@ public sealed class HotkeyDialog : Window
     {
         Title = "自定义快捷键"; Width = 540; SizeToContent = SizeToContent.Height;
         ResizeMode = ResizeMode.NoResize; WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        var panel = new StackPanel { Margin = new Thickness(18) }; Content = panel;
+        var panel = new StackPanel { Margin = new Thickness(18) };
+        Content = Chrome.AttachDialog(this, "自定义快捷键", panel);
         panel.Children.Add(new TextBlock { Text = "点击录入框后按下快捷键，或用下拉框和勾选项设置。\n修改期间暂停全局快捷键，关闭此窗口后重新注册。", TextWrapping = TextWrapping.Wrap });
         startEditor = new BindingEditor("开始快捷键", start);
         stopEditor = new BindingEditor("停止快捷键", stop);
@@ -38,14 +39,17 @@ public sealed class HotkeyDialog : Window
 
     private sealed class BindingEditor : StackPanel
     {
-        private sealed record Choice(uint Key, string Name);
-        private readonly ComboBox key = new() { Width = 100, DisplayMemberPath = "Name" };
+        // 下拉框直接放按键名字符串，另用 keys 保留与下标对应的虚拟键值。
+        // 不用 DisplayMemberPath 绑到私有嵌套记录上：自绘模板下列表框取不到该模板，
+        // 会退回显示记录类型的 ToString()（也就是 "Choice { ... }"）。
+        private readonly ComboBox key = new() { Width = 100 };
         private readonly CheckBox ctrl = new() { Content = "Ctrl", Margin = new Thickness(8, 0, 0, 0) };
         private readonly CheckBox alt = new() { Content = "Alt", Margin = new Thickness(8, 0, 0, 0) };
         private readonly CheckBox shift = new() { Content = "Shift", Margin = new Thickness(8, 0, 0, 0) };
         private readonly TextBox capture = new() { IsReadOnly = true, Margin = new Thickness(0, 6, 0, 6), Padding = new Thickness(8) };
         private readonly TextBlock hint = new() { TextWrapping = TextWrapping.Wrap };
-        public HotkeyBinding Value => new((key.SelectedItem as Choice)?.Key ?? 0,
+        private uint[] keys = Array.Empty<uint>();
+        public HotkeyBinding Value => new(key.SelectedIndex >= 0 && key.SelectedIndex < keys.Length ? keys[key.SelectedIndex] : 0u,
             (ctrl.IsChecked == true ? 2u : 0u) | (alt.IsChecked == true ? 1u : 0u) | (shift.IsChecked == true ? 4u : 0u));
         public BindingEditor(string label, HotkeyBinding binding)
         {
@@ -54,8 +58,8 @@ public sealed class HotkeyDialog : Window
             Children.Add(capture);
             var choices = Enumerable.Range(0x70, 11).Concat(Enumerable.Range(0x30, 10))
                 .Concat(Enumerable.Range(0x41, 26)).Concat(new[] { 0x1B, 0x20, 0x24, 0x23, 0x21, 0x22, 0x2D, 0x2E });
-            key.ItemsSource = choices.Where(k => k is not (0x5A or 0x58 or 0x43 or 0x56 or 0x42 or 0x4E or 0x4D))
-                .Select(k => new Choice((uint)k, HotkeyBinding.KeyName((uint)k))).ToArray();
+            keys = choices.Where(k => k is not (0x5A or 0x58 or 0x43 or 0x56 or 0x42 or 0x4E or 0x4D)).Select(k => (uint)k).ToArray();
+            key.ItemsSource = keys.Select(HotkeyBinding.KeyName).ToArray();
             var row = new StackPanel { Orientation = Orientation.Horizontal };
             row.Children.Add(key); row.Children.Add(ctrl); row.Children.Add(alt); row.Children.Add(shift);
             Children.Add(row); Children.Add(hint);
@@ -76,7 +80,7 @@ public sealed class HotkeyDialog : Window
         }
         public void Set(HotkeyBinding value)
         {
-            key.SelectedItem = key.Items.Cast<Choice>().FirstOrDefault(c => c.Key == value.Key);
+            key.SelectedIndex = Array.IndexOf(keys, value.Key);
             ctrl.IsChecked = (value.Modifiers & 2) != 0;
             alt.IsChecked = (value.Modifiers & 1) != 0;
             shift.IsChecked = (value.Modifiers & 4) != 0;
