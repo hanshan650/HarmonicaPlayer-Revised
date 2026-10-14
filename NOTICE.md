@@ -9,7 +9,7 @@ See the modification list below. All original code and design credit goes to the
 
 - **原作者仓库**：https://github.com/lanselanlanxi-wq/HarmonicaPlayer
 - **修改基线**：上游 `main` 的 `212316e`（版本 **v0.3.3**，2026-09-25）
-- **本仓库**：`HarmonicaPlayer-Revised`（本修改版，作者 hanshan650），在上游 v0.3.3 基础上继续开发，当前版本 **v1.1**
+- **本仓库**：`HarmonicaPlayer-Revised`（本修改版，作者 hanshan650），在上游 v0.3.3 基础上继续开发，当前版本 **v1.3**
 - 原作者的最新版本始终以上游仓库为准；本仓库不是官方版本，也不代表原作者的意见。
 
 ## 2. 许可与版权
