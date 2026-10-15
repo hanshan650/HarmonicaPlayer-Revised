@@ -110,8 +110,11 @@ static class AudioToScoreTests
                 "重复候选被去掉");
 
             string hint = AudioToScore.SetupHint(sandbox);
-            Check(hint.Contains(AudioToScore.EnvironmentVariable) && hint.Contains("setup.ps1"),
-                "安装提示里给出环境变量名与安装脚本");
+            // 新契约：优先引导安装向导（应用内一键安装），环境变量只作为手动指认的备选。
+            Check(hint.Contains(AudioToScore.EnvironmentVariable) && hint.Contains("安装向导"),
+                "安装提示里给出环境变量名与安装向导指引");
+            Check(hint.Contains("python.exe") && hint.Contains("transcribe.py"),
+                "安装提示列出手动准备目录所需的文件");
 
             // ---------- 协议行解析（run 协议的关键约定） ----------
             Check(AudioToScore.PythonRelative.Replace('\\', '/').EndsWith("venv/Scripts/python.exe"),

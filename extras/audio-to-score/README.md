@@ -20,37 +20,59 @@
 主程序的分发包只有 163 MB。为了一个可选功能把发布体积撑大 50 多倍并不划算；
 而且模型权重是**非商业许可**（CC BY-NC 4.0，见文末），适合由使用者按需自行获取。
 
-所以：代码在仓库里，环境由你用脚本装。装完主程序会自动找到。
+所以：**软件只带本体，环境在你自己的机器上一键装出来**——不需要预装 Python，
+不需要开命令行，全程在软件界面里完成。
 
 ---
 
-## 需要什么
+## 安装（推荐）：软件内一键安装
 
-**磁盘**
-- 至少 **15 GB** 空闲（建议 20 GB 以上：装完约占 9.3 GB，
-  中途 pip 缓存与解包 2.9 GB 的 torch wheel 还会临时占用几个 GB）。
-- 默认装在**仓库父目录**下（`…/洲口琴工具/AudioToScore-runtime`）。
-  脚本会先检查目标盘剩余空间，不足会直接报错并让你用 `-Root` 换盘。
+在软件主界面点「音频转谱」。检测到环境不存在时，会自动弹出安装向导，
+告诉你预计下载量、装到哪里、用 GPU 还是 CPU。点「开始安装」即可：
 
-**显卡（可选但强烈建议）**
-- 有 NVIDIA 显卡：装 CUDA 版 PyTorch，转谱快得多（实测显存峰值约 2.1 GB，4 GB 的卡就够）。
-- 没有也能跑：加 `-CpuOnly` 装 CPU 版，只是慢（见「实测性能」）。
+- **不需要预装 Python**——安装器会下载官方的嵌入式 Python 3.11（约 11 MB），
+  放在组件目录里，不碰你系统里已有的任何 Python。
+- **自动判断显卡**：检测到 NVIDIA 显卡就装 CUDA 版 PyTorch（下载约 2.9 GB），
+  没有就装 CPU 版（约 230 MB，转谱慢很多但能用）。
+- **可中断续装**：中途取消不白费——已下好的部分保留着，下次点安装接着来。
+- **装完自动识别**：环境装在软件 EXE 旁的 `音频转谱\` 目录，
+  正是主程序默认查找的位置，关掉向导就能直接转谱。
 
-**Python 3.10 或 3.11**
-- 必须是这两个版本之一。模型锁定的 `numpy==1.24.3` 在 Python 3.12+ 上装不了。
-- 没装的话：`winget install Python.Python.3.11`，或从 python.org 下载。
-- 脚本会用 `py -3.11` / `py -3.10` 启动器自动找；找不到就用 `-PythonExe` 手动指定。
+装完后的目录结构（嵌入式布局）：
 
-**系统**：Windows 10 1809 或更高（主程序本身的要求）。
+```
+音频转谱\
+  python.exe / python311.dll / python311.zip   ← 嵌入式 Python（约 30 MB）
+  Lib\site-packages\                           ← torch 等依赖（约 6.8 GB）
+  transcribe.py / fetch_models.py              ← 侧车脚本（由程序从资源释放）
+  models\
+    SheetSage2\                                ← 218 MB
+    MERT-v2-FullSong\                          ← 2.4 GB
+```
+
+**需要什么**：Windows 10 1809+；至少 **15 GB** 空闲磁盘（建议 20 GB）；
+首次安装要联网下载约 **5.5 GB**（GPU 版）或 **2.8 GB**（CPU 版）。
 
 > 不需要 FFmpeg。侧车脚本用 `soundfile` 直接解码音频（libsndfile 1.2 起原生支持 MP3），
 > 音频格式支持 wav / mp3 / flac / ogg。
 
 ---
 
-## 一键安装
+## 安装（备选）：手动脚本 setup.ps1
 
-在仓库里找到本文件夹（`extras\audio-to-score`），打开 PowerShell 执行：
+**这是给从仓库构建软件的开发者用的**，面向的是愿意自己动手的人。
+普通用户请直接用上面的软件内安装。
+
+与应用内安装的区别：
+
+| | 软件内一键安装 | setup.ps1 |
+| --- | --- | --- |
+| Python | 自带嵌入式 3.11，无需预装 | 用你系统里的 Python **3.10 / 3.11** |
+| 布局 | 嵌入式（目录可整体拷到别的 Win64 机器） | `venv\`（**不可移植**，见下文） |
+| 默认位置 | EXE 旁的 `音频转谱\` | 仓库父目录的 `AudioToScore-runtime\` |
+| 入口 | 软件界面里的向导 | 手动执行 PowerShell |
+
+用法：
 
 ```powershell
 # 默认位置（仓库父目录下的 AudioToScore-runtime）
@@ -66,28 +88,15 @@ powershell -ExecutionPolicy Bypass -File setup.ps1 -CpuOnly
 powershell -ExecutionPolicy Bypass -File setup.ps1 -SkipModels
 ```
 
-脚本依次做这些事：
+Python 必须是 **3.10 或 3.11**——模型锁定的 `numpy==1.24.3` 在 3.12+ 上装不了。
+脚本会用 `py -3.11` / `py -3.10` 启动器自动找；找不到就用 `-PythonExe` 手动指定。
 
-1. **定位安装目录**，检查磁盘空间；
-2. **查找 Python 3.10 / 3.11**（`py` 启动器 → PATH 上的 `python3.11` / `python3.10` / `python`）；
-3. **建虚拟环境** `venv\`（已存在则复用）；
-4. **装依赖**：`transformers==4.45.2`、`numpy==1.24.3`、`scipy`、`pretty_midi`、`mido`、`soundfile` 等
-   （走清华 PyPI 镜像，版本与模型仓库的 `requirements.txt` 严格对齐）；
-5. **装 PyTorch 2.8.0 + torchaudio 2.8.0**（CUDA 12.6 版；失败自动回退 CPU 版）；
-6. **复制侧车脚本** `transcribe.py` / `fetch_models.py` 到运行目录；
-7. **下载模型权重**（约 2.6 GB，走 ModelScope 镜像，支持断点续传，MERT 权重会做 sha256 校验）；
-8. **自检**：跑一次 `transcribe.py --check`，打印 torch 版本、显卡、权重是否齐全。
+中途断了直接重跑同一个命令——已下好的文件会跳过。
 
-全程约需下载 6 GB（CUDA 版 torch 的 wheel 本身就有 2.9 GB）。中途断了直接重跑同一个命令就行——已下好的文件会跳过。
-
-装完最后会打印：
-
-```
-安装完成。
-运行目录：D:\洲口琴工具\AudioToScore-runtime
-回到软件里点「音频转谱」即可；软件会自动找到这个目录，
-也可以设置环境变量 HARMONICA_AUDIO2SCORE=D:\洲口琴工具\AudioToScore-runtime 显式指认。
-```
+> **venv 布局不可移植**：`venv\pyvenv.cfg` 里写死了创建机器的 Python 路径，
+> venv 自身也不带 `python311.dll`。所以 setup.ps1 装出来的目录**不能拷到别的电脑用**
+> （同一台机器上换个盘可以，记得设环境变量指认新位置）。
+> 需要"拷走就能用"的话，请用软件内一键安装（嵌入式布局）。
 
 ---
 
@@ -97,44 +106,50 @@ powershell -ExecutionPolicy Bypass -File setup.ps1 -SkipModels
 
 1. 环境变量 `HARMONICA_AUDIO2SCORE` 指认的目录
 2. 设置文件里记录的目录（在软件里选过一次就会记住）
-3. **EXE 同级**的 `音频转谱\` 文件夹
-4. **仓库父目录**下的 `AudioToScore-runtime\`（开发布局；即 `setup.ps1` 的默认位置）
+3. **EXE 同级**的 `音频转谱\` 文件夹（软件内一键安装的默认位置）
+4. **仓库父目录**下的 `AudioToScore-runtime\`（开发布局；`setup.ps1` 的默认位置）
 5. `%LOCALAPPDATA%\HarmonicaPlayer\AudioToScore-runtime\`
 
 一个目录要"能用"必须同时具备：
 
 ```
 <运行目录>\
-  venv\Scripts\python.exe     ← Python 环境
-  transcribe.py               ← 侧车脚本
+  python.exe  或  venv\Scripts\python.exe   ← Python 环境（两种布局都认）
+  transcribe.py                             ← 侧车脚本
   models\SheetSage2\model.safetensors
   models\MERT-v2-FullSong\model.safetensors
 ```
 
-缺哪一项，软件会明确告诉你缺什么，并给出候选目录列表。
-
-> 便携需求：想换盘，直接把整个 `AudioToScore-runtime` 文件夹剪切过去，
-> 再设一下环境变量 `HARMONICA_AUDIO2SCORE` 即可——脚本里没有任何写死的绝对路径。
+找不到时软件会弹出安装向导；选「我已经装好了」可以手动指认目录，
+指认对了会记住，下次直接用。
 
 ---
 
 ## 命令行用法
 
-不通过软件也能直接跑（调试或批量处理用）：
+不通过软件也能直接跑（调试或批量处理用）。
+注意 python 的路径随布局不同：
 
 ```powershell
 cd <运行目录>
-.\venv\Scripts\python.exe transcribe.py --audio "D:\music\song.mp3" --out "D:\out\song"
 
+# 嵌入式布局（软件内一键安装出来的）
+.\python.exe transcribe.py --audio "D:\music\song.mp3" --out "D:\out\song"
+
+# venv 布局（setup.ps1 装出来的）
+.\venv\Scripts\python.exe transcribe.py --audio "D:\music\song.mp3" --out "D:\out\song"
+```
+
+```powershell
 # 环境自检（打印 torch 版本 / 显卡 / 权重状态，JSON 输出）
-.\venv\Scripts\python.exe transcribe.py --check
+.\python.exe transcribe.py --check
 
 # 只转前 60 秒，快速看效果
-.\venv\Scripts\python.exe transcribe.py --audio song.mp3 --out out\ --max-seconds 60
+.\python.exe transcribe.py --audio song.mp3 --out out\ --max-seconds 60
 
 # 强制 CPU / 指定主旋律来源
-.\venv\Scripts\python.exe transcribe.py --audio song.mp3 --out out\ --device cpu
-.\venv\Scripts\python.exe transcribe.py --audio song.mp3 --out out\ --melody-track instrumental
+.\python.exe transcribe.py --audio song.mp3 --out out\ --device cpu
+.\python.exe transcribe.py --audio song.mp3 --out out\ --melody-track instrumental
 ```
 
 | 参数 | 说明 |
@@ -164,7 +179,6 @@ cd <运行目录>
 | --- | --- |
 | `melody_file` | 产出的 MIDI 绝对路径 |
 | `duration_sec` / `elapsed_sec` | 音频时长 / 实际耗时 |
-| `realtime_factor` | `duration_sec / elapsed_sec`，越大越快（>1 表示比实时快） |
 | `device` / `device_name` | 跑了哪个设备、卡的名字 |
 | `dtype` | bf16 / fp32 |
 | `peak_vram_mib` | 显存峰值（MiB），CPU 上为 0 |
@@ -197,8 +211,8 @@ cd <运行目录>
   3 秒的片段反而要 12 秒。
 - **显存只要约 2.1 GB**。4 GB 显存的卡就够，8 GB 有大量余量；峰值与音频长度几乎无关
   （模型按 5 分钟窗口处理，不会因为音频长就吃更多显存）。
-- CPU 也能跑（`-CpuOnly`），但会慢一个数量级，适合只转几十秒的片段。
-- 磁盘占用：环境 + 权重合计约 **9.3 GB**（venv 6.8 GB，其中 CUDA 版 torch 6.3 GB；
+- CPU 也能跑，但会慢一个数量级，适合只转几十秒的片段。
+- 磁盘占用：环境 + 权重合计约 **9.3 GB**（site-packages 6.8 GB，其中 CUDA 版 torch 6.3 GB；
   两个模型 2.6 GB）。
 
 ### 准确性
@@ -228,22 +242,22 @@ cd <运行目录>
 
 ## 常见问题
 
-**Q：点了「音频转谱」提示找不到环境？**
-说明脚本没装或装到了别的地方。按提示里的候选目录列表检查，或者设环境变量
-`HARMONICA_AUDIO2SCORE=<运行目录>`。也可以在软件里手动选一次目录，之后会记住。
+**Q：点了「音频转谱」弹出安装向导，是必须装吗？**
+是。这个功能需要约 9 GB 的运行环境与模型，不随软件本体提供。
+不想装就点「以后再说」，不影响软件其它任何功能。
 
-**Q：`venv` 建好了但 pip 装 torch 卡住 / 断线？**
-CUDA 版 torch 的 wheel 有 2.9 GB。断了就重跑 `setup.ps1`，pip 会从缓存续；
-也可以加 `-CpuOnly` 先装 CPU 版验证流程通不通。
+**Q：安装中途失败 / 断网了？**
+重新点一次「音频转谱」→「开始安装」即可。已下好的部分（Python 环境、依赖、
+模型文件）都会保留并跳过，只会接着下缺的部分。
 
-**Q：报「numpy 1.24.3 装不了 / 版本不兼容」？**
-Python 装成 3.12 或更高了。模型的 `requirements.txt` 硬锁 `numpy==1.24.3`，
-必须用 Python 3.10 或 3.11。装好对应版本后重跑脚本，或用 `-PythonExe` 直接指定。
+**Q：提示找不到环境？**
+说明环境没装或装到了别的地方。点「音频转谱」让安装向导跑一次；
+或者你已经装过了，就在向导里点「我已经装好了」手动指认目录，
+也可以设环境变量 `HARMONICA_AUDIO2SCORE=<运行目录>`。
 
-**Q：下载权重很慢 / 报 404？**
-脚本默认走 **ModelScope**（实测 24 MB/s）。`huggingface.co` 直连不通，
-`hf-mirror.com` 对 `/resolve/` 有限流、大文件几乎下不动，所以只作为备选：
-`--source hf`。权重下完会校验 MERT 的 sha256，不一致会自动重下。
+**Q：下载模型权重很慢？**
+权重走 **ModelScope** 镜像（实测 24 MB/s）。命令行手动下载时可加 `--source hf`
+改走 hf-mirror 备选，但它对 `/resolve/` 有限流，大文件几乎下不动，不建议。
 
 **Q：转出来的简谱音不对 / 少了音？**
 模型输出的是"主旋律"，对纯人声、单声道乐器（比如口琴独奏）效果最好；
@@ -260,9 +274,16 @@ Python 装成 3.12 或更高了。模型的 `requirements.txt` 硬锁 `numpy==1.
 显存实在紧张就 `--device cpu`（慢很多但能跑）。显存峰值记录在 `summary.json` 的
 `peak_vram_mib` 里，可以据此判断自己的机器够不够。
 
+**Q：能把这个组件拷到别的电脑上用吗？**
+看你用哪种方式装的：
+- **软件内一键安装**（嵌入式布局）：可以。整个 `音频转谱\` 文件夹拷过去，
+  放到目标机器软件 EXE 旁即可，不依赖目标机器装没装 Python。
+- **setup.ps1**（venv 布局）：不行。venv 写死了创建机器的 Python 路径，
+  只能在原机器上用（同机换盘可以，设环境变量指认新位置）。
+
 **Q：删掉这个组件会影响主程序吗？**
-不会。主程序里「音频转谱」按钮找不到环境只会弹提示，其它功能完全不受影响。
-想彻底卸载，直接删掉整个 `AudioToScore-runtime` 文件夹即可（它和主程序在不同位置）。
+不会。主程序里「音频转谱」按钮找不到环境只会弹安装向导，其它功能完全不受影响。
+想彻底卸载，直接删掉整个组件目录即可。
 
 ---
 
@@ -291,18 +312,18 @@ Python 装成 3.12 或更高了。模型的 `requirements.txt` 硬锁 `numpy==1.
 ```
 extras/audio-to-score/           ← 本文件夹（随仓库发布，体积很小）
   README.md                      ← 你正在看的这份
-  setup.ps1                      ← 一键安装
-  transcribe.py                  ← 侧车脚本：音频 → MIDI（运行时会被复制到运行目录）
-  fetch_models.py                ← 权重下载（运行时会被复制到运行目录）
+  setup.ps1                      ← 手动安装脚本（开发者备选）
+  transcribe.py                  ← 侧车脚本：音频 → MIDI（也内嵌在主程序 EXE 里）
+  fetch_models.py                ← 权重下载（也内嵌在主程序 EXE 里）
 
-AudioToScore-runtime/            ← 脚本装出来的运行目录（不进 git，不进分发包）
-  venv/                          ← Python 环境（6.8 GB）
-  models/
-    SheetSage2/                  ← 218 MB
-    MERT-v2-FullSong/            ← 2.4 GB
-  transcribe.py                  ← setup.ps1 复制过来的
-  fetch_models.py
-  hf/modules/                    ← transformers 动态模块缓存（几 MB）
-  logs/                          ← 转谱日志
-  out/                           ← 每次转谱的输出（melody.mid / summary.json …）
+<软件 EXE 旁>\音频转谱\           ← 软件内一键安装出来的目录（嵌入式布局，可移植）
+  python.exe / python311.dll …   ← 嵌入式 Python
+  Lib\site-packages\             ← 依赖（约 6.8 GB）
+  models\SheetSage2\             ← 218 MB
+  models\MERT-v2-FullSong\       ← 2.4 GB
+  out\                           ← 每次转谱的输出（melody.mid / summary.json …）
+
+<仓库父目录>\AudioToScore-runtime\   ← setup.ps1 装出来的目录（venv 布局，不可移植）
+  venv\                          ← Python 环境（6.8 GB）
+  models\                        ← 同上
 ```

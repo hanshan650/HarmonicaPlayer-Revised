@@ -835,14 +835,11 @@ public sealed partial class PlayerWindow : Window
         SelectLibraryFile(path);
         return true;
     }
-    // 音频转谱：可选附加组件（SheetSage2）。环境不在时只给安装指引，不当作程序故障。
+    // 音频转谱：可选附加组件（SheetSage2）。环境不在时引导用户装一次，装完自动认出。
     private Task RunAudioToScore() => DocumentOperation(async () =>
     {
-        if (!TryLocateAudioToScore(out string root, out string reason))
-        {
-            ReportIssue("音频转谱环境不可用：" + reason + "\n\n" + AudioToScore.SetupHint(AppContext.BaseDirectory));
-            return false;
-        }
+        if (!EnsureAudioToScore()) return false;
+        string root = audioToScoreRoot!;
 
         string? audio = scoreDialogs.OpenAudio(this);
         if (audio == null) return false;
@@ -913,23 +910,46 @@ public sealed partial class PlayerWindow : Window
         return string.Join("\n", all.Length <= lines ? all : all[^lines..]).Trim();
     }
 
-    // 找到环境就顺手记进设置，下次不用再找。
-    private bool TryLocateAudioToScore(out string root, out string reason)
+    // 确认环境可用。顺序：候选目录 → 引导安装 → 用户自己指认。
+    // 装到哪儿由安装器决定（EXE 旁的「音频转谱」），装完自动重认，用户不必知道这些细节。
+    private bool EnsureAudioToScore()
     {
-        if (AudioToScore.TryLocate(AppContext.BaseDirectory, settings.AudioToScoreRoot, out root, out reason, out _))
+        if (AudioToScore.TryLocate(AppContext.BaseDirectory, settings.AudioToScoreRoot,
+                out string found, out _, out _))
         {
-            RememberAudioToScoreRoot(root);
+            RememberAudioToScoreRoot(found);
             return true;
         }
-        // 没找到就请用户指认一次；指认对了就记住。
+
+        var dialog = new AudioToScoreInstallDialog(AppContext.BaseDirectory) { Owner = this };
+        bool installed = dialog.ShowDialog() == true && dialog.Installed;
+        if (dialog.WantPickFolder) return PickAudioToScoreFolder();
+        if (!installed) return false;
+
+        if (!AudioToScore.TryLocate(AppContext.BaseDirectory, settings.AudioToScoreRoot,
+                out found, out string why, out _))
+        {
+            ReportIssue("安装完成了，但环境仍然不可用：" + why);
+            return false;
+        }
+        RememberAudioToScoreRoot(found);
+        status.Text = "音频转谱环境已就绪。";
+        return true;
+    }
+
+    // 用户自己已经装好了（例如从仓库跑过 setup.ps1）：让他指认一次目录，对了就记住。
+    private bool PickAudioToScoreFolder()
+    {
         string? picked = scoreDialogs.OpenFolder(this,
-            "选择「音频转谱」附加组件目录（里面应有 venv、models 与 transcribe.py）");
+            "选择「音频转谱」附加组件目录（里面应有 python.exe、models 与 transcribe.py）");
         if (picked == null) return false;
         string why = AudioToScore.Describe(picked);
-        if (why.Length > 0) { root = picked; reason = why; return false; }
-        root = picked;
+        if (why.Length > 0)
+        {
+            ReportIssue("这个目录还不能用：" + why + "\n\n" + AudioToScore.SetupHint(AppContext.BaseDirectory));
+            return false;
+        }
         RememberAudioToScoreRoot(picked);
-        reason = "";
         return true;
     }
 

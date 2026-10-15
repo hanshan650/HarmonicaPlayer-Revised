@@ -1,5 +1,10 @@
-<#
-    一键安装「音频转谱」附加组件。
+﻿<#
+    手动安装「音频转谱」附加组件（开发者备选路径）。
+
+    ⚠ 普通用户请不要用这个脚本：直接在软件里点「音频转谱」，安装向导会自动完成一切，
+    而且用的是嵌入式 Python（无需预装、装出的目录可整体拷贝）。
+    这个脚本面向从仓库构建软件的开发者——它用的是你系统里的 Python 3.10/3.11 建 venv，
+    装出的目录【不能拷到别的电脑】（pyvenv.cfg 写死了本机 Python 路径，且不带 python311.dll）。
 
     做的事：建独立 Python 环境 → 装 PyTorch 与依赖 → 把侧车脚本放到运行目录 → 下载模型权重 → 自检。
 
@@ -32,7 +37,8 @@ $repoRoot = Split-Path (Split-Path $scriptDir -Parent) -Parent
 $repoParent = Split-Path $repoRoot -Parent
 
 $PipMirror = 'https://pypi.tuna.tsinghua.edu.cn/simple'
-$TorchIndex = 'https://download.pytorch.org/whl/cu126'
+$TorchIndex = 'https://mirror.sjtu.edu.cn/pytorch-wheels/cu126/'
+$TorchIndexFallback = 'https://download.pytorch.org/whl/cu126'
 $TorchFallbackIndex = 'https://download.pytorch.org/whl/cpu'
 
 function Write-Step([string]$text) { Write-Host ''; Write-Host "== $text" -ForegroundColor Cyan }
@@ -141,12 +147,25 @@ Invoke-Pip (@('install', '-i', $PipMirror) + $deps)
 Write-Ok '依赖安装完成'
 
 Write-Step '安装 PyTorch 2.8.0'
-$torchIndex = if ($CpuOnly) { $TorchFallbackIndex } else { $TorchIndex }
-try {
-    Invoke-Pip @('install', 'torch==2.8.0', 'torchaudio==2.8.0', '--index-url', $torchIndex)
-} catch {
-    Write-Warn2 "从 $torchIndex 安装失败，改用 CPU 版重试（转谱会明显变慢，但能跑）。"
-    Invoke-Pip @('install', 'torch==2.8.0', 'torchaudio==2.8.0', '--index-url', $TorchFallbackIndex)
+if ($CpuOnly) {
+    Invoke-Pip @('install', 'torch==2.8.0', 'torchaudio==2.8.0', '--index-url', $TorchFallbackIndex, '--extra-index-url', $PipMirror)
+} else {
+    # 先走上海交大镜像（实测 43 MB/s，官方源只有 1.5 MB/s 左右），失败回退官方源。
+    # 两个源都是 cu126 的 GPU 版；都失败才退到 CPU 版。
+    $installed = $false
+    foreach ($idx in @($TorchIndex, $TorchIndexFallback)) {
+        try {
+            Invoke-Pip @('install', 'torch==2.8.0', 'torchaudio==2.8.0', '--index-url', $idx, '--extra-index-url', $PipMirror)
+            $installed = $true
+            break
+        } catch {
+            Write-Warn2 "从 $idx 安装失败，换下一个源重试。"
+        }
+    }
+    if (-not $installed) {
+        Write-Warn2 'CUDA 版装不上，改用 CPU 版（转谱会明显变慢，但能跑）。'
+        Invoke-Pip @('install', 'torch==2.8.0', 'torchaudio==2.8.0', '--index-url', $TorchFallbackIndex, '--extra-index-url', $PipMirror)
+    }
 }
 Write-Ok 'PyTorch 安装完成'
 

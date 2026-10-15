@@ -10,12 +10,20 @@ namespace HarmonicaPlayer;
 //
 // 这个组件刻意**不进分发包**：SheetSage2 + MERT-v2-FullSong 权重约 2.6 GB，
 // Python/PyTorch 环境再加约 6.8 GB，合计约 9.3 GB，塞进现在 163 MB 的单文件 EXE 里没有意义。
-// 用户自己把环境装好之后，主程序只做三件事：找到它、起进程、把产出的 MIDI 接进现有导入管线。
+// 环境由 AudioToScoreInstaller 在用户机器上一键装出来（嵌入式 Python，无需预装），
+// 装在 EXE 旁的「音频转谱」——正好是下面的候选目录，装完自动被认出。
+// 主程序只做三件事：找到它、起进程、把产出的 MIDI 接进现有导入管线。
 //
 // 刻意与 WPF 无关（与 ScoreEditor 同一路数），这样测试可以直接对协议解析与目录判定下断言。
 public static class AudioToScore
 {
-    /// 运行时目录里必须存在的相对路径。
+    /// 运行时目录里可能存在的 Python 解释器，按优先级排列。
+    /// 嵌入式布局把它放在目录根部（应用内一键安装用的就是这种）；
+    /// `venv` 布局放在 `Scripts` 下（setup.ps1 装出来的那种）。两种都要认。
+    public static readonly IReadOnlyList<string> PythonRelatives =
+        new[] { "python.exe", @"venv\Scripts\python.exe" };
+
+    /// `venv` 布局的 Python 相对路径。保留为常量，旧代码与测试仍在引用。
     public const string PythonRelative = @"venv\Scripts\python.exe";
     public const string ScriptRelative = "transcribe.py";
     public const string SheetSageWeights = @"models\SheetSage2\model.safetensors";
@@ -28,8 +36,10 @@ public static class AudioToScore
     /// 仓库开发布局下的同级目录名（EXE 在 bin/Release/net8.0-windows 里）。
     public const string SiblingRuntimeName = "AudioToScore-runtime";
 
-    /// 从 EXE 目录往上走几层能到仓库的父目录：net8.0-windows → Release → bin → 仓库。
-    private const int RepositoryParentDepth = 3;
+    /// 从 EXE 目录往上走几层能到仓库的父目录：
+    /// net8.0-windows（0）→ Release（1）→ bin（2）→ 仓库（3）→ 仓库的父目录（4）。
+    /// 源码布局下 setup.ps1 默认把环境装在这里，少走一层就会找错地方。
+    private const int RepositoryParentDepth = 4;
 
     /// 侧车写出的 summary.json。字段缺失一律给默认值——模型换版本时不该让界面炸掉。
     public sealed record Summary(
@@ -156,28 +166,42 @@ public static class AudioToScore
         return false;
     }
 
+    /// 在运行时目录里找 Python 解释器，找不到返回 null。
+    /// 嵌入式与 venv 两种布局都认，所以上层只关心“有没有”。
+    public static string? FindPython(string root)
+    {
+        foreach (string relative in PythonRelatives)
+        {
+            string candidate = Path.Combine(root, relative);
+            if (File.Exists(candidate)) return candidate;
+        }
+        return null;
+    }
+
     /// 返回空串表示这个目录可以直接用；否则是人话说明缺什么。
     public static string Describe(string root)
     {
         if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root)) return "目录不存在：" + root;
-        if (!File.Exists(Path.Combine(root, PythonRelative))) return "缺少 Python 环境（venv）。";
+        if (FindPython(root) is null) return "缺少 Python 运行环境。";
         if (!File.Exists(Path.Combine(root, ScriptRelative))) return "缺少 transcribe.py。";
         if (!File.Exists(Path.Combine(root, SheetSageWeights))) return "缺少 SheetSage2 权重。";
         if (!File.Exists(Path.Combine(root, MertWeights))) return "缺少 MERT-v2-FullSong 权重。";
         return "";
     }
 
-    /// 界面里显示的「去哪儿装」提示。
+    /// 界面里显示的「去哪儿装」提示。正常情况下用不到——点「音频转谱」会自动弹出安装向导；
+    /// 这段文字只在用户手动指认了一个不完整的目录时出现，用来解释到底缺什么。
     public static string SetupHint(string baseDirectory) => string.Join("\n",
-        "音频转谱是一个可选附加组件，不随分发包提供（模型与环境约 9 GB）。",
-        "装上之后本程序会自动找到它；也可以设置环境变量 " + EnvironmentVariable + " 指认目录。",
+        "「音频转谱」是一个可选附加组件，运行环境与模型（合计约 9 GB）不随程序本体提供。",
+        "正常情况下点一次「音频转谱」就会出现安装向导，按提示装即可。",
+        "也可以自己准备一个目录，里面需要有：",
+        "  · python.exe（或 venv\\Scripts\\python.exe）",
+        "  · transcribe.py",
+        "  · models\\SheetSage2\\model.safetensors",
+        "  · models\\MERT-v2-FullSong\\model.safetensors",
+        "另外可以用环境变量 " + EnvironmentVariable + " 直接指认目录。",
         "",
-        "安装步骤：",
-        "1. 打开仓库里的 extras\\audio-to-score 文件夹；",
-        "2. 右键 setup.ps1 → 使用 PowerShell 运行（首次需下载约 6 GB）；",
-        "3. 装完回到这里再点一次「音频转谱」。",
-        "",
-        "候选目录（按顺序找）：",
+        "程序会自动查找这些位置：",
         string.Join("\n", CandidateRoots(baseDirectory, null).Select(r => "  · " + r)));
 
     // ---------- 起进程 ----------
@@ -190,7 +214,8 @@ public static class AudioToScore
         string root, string audioPath, string outDir,
         Action<int, string>? progress, Action<string>? log, CancellationToken token)
     {
-        string python = Path.Combine(root, PythonRelative);
+        string python = FindPython(root)
+            ?? throw new InvalidOperationException("运行时目录里没有 Python 解释器：" + root);
         string script = Path.Combine(root, ScriptRelative);
         string modelRoot = Path.Combine(root, "models");
         Directory.CreateDirectory(outDir);
@@ -299,7 +324,8 @@ public static class AudioToScore
     {
         var startInfo = new ProcessStartInfo
         {
-            FileName = Path.Combine(root, PythonRelative),
+            FileName = FindPython(root)
+                ?? throw new InvalidOperationException("运行时目录里没有 Python 解释器：" + root),
             WorkingDirectory = root,
             UseShellExecute = false,
             CreateNoWindow = true,

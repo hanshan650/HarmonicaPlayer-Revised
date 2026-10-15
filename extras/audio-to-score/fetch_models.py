@@ -59,6 +59,33 @@ def human(n: float) -> str:
     return f"{n:.1f} GB"
 
 
+class Progress:
+    """向上层（主程序）汇报的机器可读进度。
+
+    协议是本组件与主程序之间的约定，只有一行：
+
+        PROGRESS <0-100> <说明>
+
+    主程序按这个前缀解析并驱动进度条。人类可读的覆盖行只在真正的终端里输出
+    （被重定向时 isatty() 为假），否则几千行进度会把主程序的日志刷爆。
+    """
+
+    def __init__(self, total: int) -> None:
+        self.total = max(int(total), 1)
+        self.done = 0
+        self.last = -1
+
+    def add_done(self, size: int) -> None:
+        self.done += int(size or 0)
+
+    def report(self, in_file: int = 0, note: str = "") -> None:
+        percent = min(99, int((self.done + in_file) * 100 / self.total))
+        if percent == self.last and not note:
+            return
+        self.last = percent
+        print(f"PROGRESS {percent} {note or f'下载模型权重 {percent}%'}", flush=True)
+
+
 def request(url: str, *, retries: int = 4, timeout: int = 30):
     last = None
     for attempt in range(retries):
@@ -101,10 +128,12 @@ def sha256_of(path: str) -> str:
     return digest.hexdigest()
 
 
-def download(repo: str, path: str, size: int, dest_root: str, source: str) -> bool:
+def download(repo: str, path: str, size: int, dest_root: str, source: str, progress: "Progress") -> bool:
     target = os.path.join(dest_root, repo, path.replace("/", os.sep))
     if os.path.exists(target) and (size == 0 or os.path.getsize(target) == size):
         print(f"  跳过（已存在） {path}")
+        progress.add_done(size)
+        progress.report()
         return False
     os.makedirs(os.path.dirname(target), exist_ok=True)
     url = file_url(repo, source, path)
@@ -126,12 +155,18 @@ def download(repo: str, path: str, size: int, dest_root: str, source: str) -> bo
                 done += len(block)
                 ticks += 1
                 if ticks % 8 == 0 and size:
-                    speed = done / max(time.time() - started, 1e-6)
-                    print(f"\r    {path}  {done / size * 100:5.1f}%  {human(speed)}/s   ", end="")
+                    progress.report(done)
+                    # 覆盖式刷新只在真终端里做；被重定向时它只会变成噪音。
+                    if sys.stdout.isatty():
+                        speed = done / max(time.time() - started, 1e-6)
+                        print(f"\r    {path}  {done / size * 100:5.1f}%  {human(speed)}/s   ", end="")
     if size and os.path.getsize(partial) != size:
         raise SystemExit(f"大小不符：{path} 期望 {size} 实际 {os.path.getsize(partial)}")
     os.replace(partial, target)
-    print(f"\r    {path}  {human(os.path.getsize(target))} 完成            ")
+    progress.add_done(size)
+    progress.report()
+    if sys.stdout.isatty():
+        print(f"\r    {path}  {human(os.path.getsize(target))} 完成            ")
     return True
 
 
@@ -143,21 +178,33 @@ def main() -> int:
     args = parser.parse_args()
 
     repos = [args.only] if args.only else REPOS
+
+    # 先把清单都取回来，才能按“所有仓库合计”算总进度。
+    # 否则每个仓库各自从 0 开始报，主程序的进度条会来回倒退。
+    plan: list[tuple[str, list[tuple[str, int]]]] = []
+    grand_total = 0
     for repo in repos:
-        print(f"== {repo}（来源 {args.source}）")
         files = list_files(repo, args.source)
-        total = sum(size for _, size in files)
-        print(f"   {len(files)} 个文件，合计 {human(total)}")
+        plan.append((repo, files))
+        grand_total += sum(size for _, size in files)
+
+    progress = Progress(grand_total)
+    for repo, files in plan:
+        print(f"== {repo}（来源 {args.source}）")
+        print(f"   {len(files)} 个文件，合计 {human(sum(size for _, size in files))}")
+        progress.report(0, f"下载 {repo}")
         for path, size in sorted(files, key=lambda x: x[1]):  # 先小后大，早点拿到代码
-            download(repo, path, size, args.dest, args.source)
+            download(repo, path, size, args.dest, args.source, progress)
 
     weights = os.path.join(args.dest, "MERT-v2-FullSong", "model.safetensors")
     if os.path.exists(weights):
         print("== 校验 MERT-v2 权重 sha256 …")
+        progress.report(0, "校验权重 sha256")
         actual = sha256_of(weights)
         if actual != MERT_SHA256:
             raise SystemExit(f"校验失败：\n  期望 {MERT_SHA256}\n  实际 {actual}")
         print("   校验通过")
+    print("PROGRESS 100 模型下载完成", flush=True)
     print("完成。模型目录：" + os.path.abspath(args.dest))
     return 0
 

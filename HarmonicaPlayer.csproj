@@ -11,4 +11,10 @@
   </PropertyGroup>
   <ItemGroup><Compile Remove="Tests/**/*.cs" /></ItemGroup>
   <ItemGroup><EmbeddedResource Include="Assets/Harmonica/*" LogicalName="HarmonicaSamples.%(Filename)%(Extension)" /></ItemGroup>
+  <!-- 音频转谱的侧车脚本随 EXE 一起发布：应用内安装时由 AudioToScoreInstaller 释放到
+       运行目录，用户那边不需要另外去仓库取这几个文件。 -->
+  <ItemGroup>
+    <EmbeddedResource Include="extras/audio-to-score/transcribe.py" LogicalName="AudioToScore.transcribe.py" />
+    <EmbeddedResource Include="extras/audio-to-score/fetch_models.py" LogicalName="AudioToScore.fetch_models.py" />
+  </ItemGroup>
 </Project>

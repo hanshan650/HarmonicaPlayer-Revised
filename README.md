@@ -54,15 +54,15 @@
 PyTorch 环境合计约 9.3 GB，而主程序的分发包只有 163 MB；而且权重许可是**非商业**的
 （CC BY-NC 4.0），适合由使用者按需自行获取。
 
-**安装**（需 Python 3.10/3.11；有 N 卡会快很多）：
+**安装：在软件里点一次「音频转谱」即可。** 检测到环境不存在时会自动弹出安装向导，
+点「开始安装」就行——不需要预装 Python（安装器自带嵌入式 Python 3.11），
+有 N 卡自动装 CUDA 加速版（下载约 5.5 GB），没有就装 CPU 版（约 2.8 GB）。
+中途取消不白费，下次接着装。装完环境就在软件 EXE 旁的 `音频转谱\` 目录，
+主程序自动认出，不用任何配置。
 
-```powershell
-# 在仓库的 extras\audio-to-score 目录下
-powershell -ExecutionPolicy Bypass -File setup.ps1
-```
+> 从仓库构建的开发者也可以手动装：`extras\audio-to-score\setup.ps1`
+> （需自备 Python 3.10/3.11；venv 布局，装出的目录**不能拷到别的电脑**）。
 
-脚本会建独立虚拟环境、装依赖、下载权重并自检，全程约需下载 6 GB（装完占约 9.3 GB）。装完回到软件里点「音频转谱」即可——
-主程序会自动找到它（也可用环境变量 `HARMONICA_AUDIO2SCORE` 指认目录）。
 完整说明、参数、性能实测与常见问题见 [extras/audio-to-score/README.md](extras/audio-to-score/README.md)。
 
 实测（RTX 4060 Laptop + bf16）：6 分 13 秒的音频 **43.5 秒**转完（约 8.6 倍速），
