@@ -52,10 +52,51 @@ public static class AudioToScoreInstaller
         "https://download.pytorch.org/whl/cu126",
     };
 
+    /// CUDA 12.8 版索引。RTX 50 系（Blackwell，sm_120）只在 cu128 及以后的
+    /// 构建里才有内核；cu126 装得上、初始化也正常，但一发射内核就报
+    /// "no kernel image is available"。装完 cu126 会先做内核冒烟测试，
+    /// 不兼容时升级到这里的版本。
+    public static readonly IReadOnlyList<string> TorchGpu128Indexes = new[]
+    {
+        "https://mirror.sjtu.edu.cn/pytorch-wheels/cu128/",
+        "https://download.pytorch.org/whl/cu128",
+    };
+
     public static readonly IReadOnlyList<string> TorchCpuIndexes = new[]
     {
         "https://download.pytorch.org/whl/cpu",
     };
+
+    /// 给新装的 torch 做真实内核冒烟测试（python -c 直接跑）。
+    /// 输出约定：恰好一行 "PROBE CUDA_OK <显卡名>" / "PROBE CUDA_FAIL <错误首行>" / "PROBE CUDA_ABSENT"。
+    public const string CudaProbeScript =
+        "import torch\r\n" +
+        "if not torch.cuda.is_available():\r\n" +
+        "    print('PROBE CUDA_ABSENT')\r\n" +
+        "else:\r\n" +
+        "    try:\r\n" +
+        "        x = torch.randn(128, 128, device='cuda', dtype=torch.bfloat16)\r\n" +
+        "        (x @ x.mT).float().sum().item()\r\n" +
+        "        print('PROBE CUDA_OK ' + torch.cuda.get_device_name(0))\r\n" +
+        "    except Exception as exc:\r\n" +
+        "        text = str(exc) or type(exc).__name__\r\n" +
+        "        print('PROBE CUDA_FAIL ' + text.splitlines()[0])\r\n";
+
+    /// 解析冒烟测试那行输出。status：OK / FAIL / ABSENT；解析不出来返回 false。
+    public static bool TryParseCudaProbe(string line, out string status, out string detail)
+    {
+        status = "";
+        detail = "";
+        string text = line.Trim();
+        if (!text.StartsWith("PROBE CUDA_", StringComparison.Ordinal)) return false;
+        string rest = text["PROBE CUDA_".Length..];
+        int space = rest.IndexOf(' ');
+        string head = space < 0 ? rest : rest[..space];
+        if (head is not ("OK" or "FAIL" or "ABSENT")) return false;
+        status = head;
+        detail = space < 0 ? "" : rest[(space + 1)..].Trim();
+        return true;
+    }
 
     /// 版本必须与模型仓库的 requirements.txt 一致：transformers 4.45.2 与 numpy 1.24.3 都是硬约束。
     /// mir_eval 也不能漏：SheetSage2 的 tokenization_sheetsage2.py 会 import mir_eval.chord，
@@ -276,7 +317,37 @@ public static class AudioToScoreInstaller
             log?.Invoke("换下一个源重试：" + torchError.Message);
         }
         if (torchError != null) throw torchError;
-        Report(72, "PyTorch 就绪");
+
+        // ---------- ④.5 显卡内核兼容性 ----------
+        // nvcuda.dll 只能说明"装了 N 卡驱动"，驱动能初始化 CUDA 不代表这套 torch
+        // 编译了这张卡的内核（RTX 50 系 + cu126 即如此，is_available() 照样返回 true）。
+        // 所以装完必须真发射一次内核验证；不行就 cu128 → CPU 逐级降级。
+        if (gpu)
+        {
+            Report(72, "检查显卡与 PyTorch 的兼容性");
+            var first = await RunCaptureAsync(python, new[] { "-c", CudaProbeScript }, root, token);
+            string probeLine = first.Output.Split('\n')
+                .Select(l => l.Trim()).FirstOrDefault(l => l.StartsWith("PROBE CUDA_", StringComparison.Ordinal)) ?? "";
+            TryParseCudaProbe(probeLine, out string status, out string detail);
+
+            if (status == "FAIL")
+            {
+                log?.Invoke("当前 PyTorch 与显卡不兼容（" + detail + "），尝试改装 CUDA 12.8 版…");
+                status = await ReinstallTorchAsync(python, root, TorchGpu128Indexes, "CUDA 12.8 版 PyTorch",
+                    torchBytes, Piped(31, 72, new PipState { Total = torchBytes }), log, token);
+            }
+            if (status == "FAIL")
+            {
+                log?.Invoke("CUDA 12.8 版仍与显卡不兼容，改装 CPU 版（转谱会慢很多，但稳定可用）。");
+                status = await ReinstallTorchAsync(python, root, TorchCpuIndexes, "CPU 版 PyTorch",
+                    TorchCpuBytes, Piped(31, 72, new PipState { Total = TorchCpuBytes }), log, token);
+            }
+            if (status == "FAIL")
+                log?.Invoke("警告：CPU 版也没能装上，转谱将不可用。可以删掉本组件目录后重新安装。");
+            else if (status == "OK")
+                log?.Invoke("显卡兼容：" + detail);
+        }
+        Report(73, "PyTorch 就绪");
 
         // ---------- ⑤ 侧车脚本 ----------
         Report(73, "写入转谱脚本");
@@ -523,6 +594,42 @@ public static class AudioToScoreInstaller
         output.Append(await stdout).Append(await stderr);
         process.WaitForExit();
         return (process.ExitCode, output.ToString());
+    }
+
+    /// 强制换装另一套 torch（跨 CUDA 版本或降级 CPU 时用），装完重新冒烟测试。
+    /// 返回重新探针后的状态：OK / FAIL / ABSENT（ABSENT 只可能出现在 CPU 版之后，视为 OK）。
+    /// 不带 --no-deps：CUDA 运行库（nvidia-* 系列包）必须跟着 torch 一起换，版本是配对的。
+    private static async Task<string> ReinstallTorchAsync(
+        string python, string root, IReadOnlyList<string> indexes, string label, long bytes,
+        Action<string> onLine, Action<string>? log, CancellationToken token)
+    {
+        foreach (string index in indexes)
+        {
+            var args = new List<string>
+            {
+                "-m", "pip", "install", "--no-warn-script-location", "--force-reinstall",
+                "torch==2.8.0", "torchaudio==2.8.0",
+                "--index-url", index,
+                "--extra-index-url", PyPiMirror,
+                "--extra-index-url", "https://download.pytorch.org/whl/cpu",
+            };
+            log?.Invoke($"从 {index} 改装 {label}（{Human(bytes)}）…");
+            int code = await RunAsync(python, args, root, onLine, token);
+            if (code != 0)
+            {
+                log?.Invoke($"{label} 安装失败（退出码 {code}），换下一个源。");
+                continue;
+            }
+
+            var probe = await RunCaptureAsync(python, new[] { "-c", CudaProbeScript }, root, token);
+            string probeLine = probe.Output.Split('\n')
+                .Select(l => l.Trim()).FirstOrDefault(l => l.StartsWith("PROBE CUDA_", StringComparison.Ordinal)) ?? "";
+            // CPU 版装好后 CUDA 必然"缺席"，这正是预期结果，算成功。
+            if (TryParseCudaProbe(probeLine, out string status, out string detail) && status is "OK" or "ABSENT")
+                return "OK";
+            log?.Invoke($"{label} 装上后探针仍不通过（{(detail.Length > 0 ? detail : "无探针输出")}）。");
+        }
+        return "FAIL";
     }
 
     private static Process StartProcess(string exe, IReadOnlyList<string> args, string workingDirectory)

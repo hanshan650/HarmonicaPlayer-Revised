@@ -68,6 +68,24 @@ static class AudioToScoreInstallerTests
                 .Any(r => string.Equals(r, defaultRoot, StringComparison.OrdinalIgnoreCase)),
             "默认安装位置会被自动识别命中");
 
+        // ---------- 显卡内核冒烟测试的探针协议 ----------
+        Check(AudioToScoreInstaller.TryParseCudaProbe("PROBE CUDA_OK NVIDIA GeForce RTX 4060 Laptop GPU",
+                out string sOk, out string dOk) && sOk == "OK" && dOk.Contains("RTX 4060"),
+            "探针：OK 带显卡名");
+        Check(AudioToScoreInstaller.TryParseCudaProbe(
+                "PROBE CUDA_FAIL CUDA error: no kernel image is available for execution on the device",
+                out string sFail, out string dFail) && sFail == "FAIL" && dFail.Contains("no kernel image"),
+            "探针：FAIL 带错误");
+        Check(AudioToScoreInstaller.TryParseCudaProbe("PROBE CUDA_ABSENT", out string sAbs, out _)
+                && sAbs == "ABSENT",
+            "探针：ABSENT 无详情");
+        Check(!AudioToScoreInstaller.TryParseCudaProbe("", out _, out _) && !AudioToScoreInstaller.TryParseCudaProbe("hello", out _, out _)
+                && !AudioToScoreInstaller.TryParseCudaProbe("PROBE CUDA_MAYBE x", out _, out _),
+            "探针：拒绝非探针行");
+        Check(AudioToScoreInstaller.CudaProbeScript.Contains("PROBE CUDA_OK")
+                && AudioToScoreInstaller.CudaProbeScript.Contains("bfloat16"),
+            "探针脚本自带协议行与试点运算");
+
         Console.WriteLine($"PASS: AudioToScoreInstaller {count} tests");
     }
 }

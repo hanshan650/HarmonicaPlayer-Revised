@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.3.0</Version>
+    <Version>1.4.1</Version>
     <Product>HarmonicaPlayer-Revised</Product>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>

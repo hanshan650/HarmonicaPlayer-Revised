@@ -269,6 +269,17 @@ cd <运行目录>
 **Q：能转多长的音频？**
 单窗口 5 分钟，超了自动分段。超长音频（比如整张专辑）会线性变久，建议先切片。
 
+**Q：报错 "CUDA error: no kernel image is available for execution on the device"？**
+装的 PyTorch 没有编译这张显卡的内核。典型场景：**RTX 50 系（Blackwell）配 CUDA 12.6 版
+torch**——驱动能初始化 CUDA（`is_available()` 也返回 true），但一跑内核就炸。
+处理（任选其一）：
+- **软件内安装的**：删掉组件目录（EXE 旁的 `音频转谱\`），回软件里重点「音频转谱」重装——
+  v1.4.1 起安装器会自动做内核冒烟测试，不兼容会自动换 CUDA 12.8 版，再不行自动降级 CPU 版；
+- **命令行手动换 cu128 版**：
+  `python.exe -m pip install --force-reinstall torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128`；
+- 临时用 CPU 跑：给 `transcribe.py` 加 `--device cpu`（慢很多）。
+旧版组件没有运行时兜底的话，也可以在转谱前先把上面的 cu128 命令跑一遍。
+
 **Q：显存不够？**
 实测峰值只要约 **2.1 GB**，而且与音频长度几乎无关，所以 4 GB 显存的卡就够用。
 显存实在紧张就 `--device cpu`（慢很多但能跑）。显存峰值记录在 `summary.json` 的

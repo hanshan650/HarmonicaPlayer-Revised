@@ -60,6 +60,28 @@ def quiet_logs(home: Path | None = None) -> None:
     os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 
+def cuda_kernel_probe() -> tuple[bool, str]:
+    """真发射一次 CUDA 内核。返回 (是否可用, 详情)。
+
+    torch.cuda.is_available() 只说明驱动能初始化 CUDA，不代表这套 torch
+    编译了这张卡的内核——典型反例：RTX 50 系（Blackwell）配 cu126 版 torch，
+    初始化一切正常，要到真正发射内核才报
+    "no kernel image is available for execution on the device"。
+    所以"能不能用"必须以试点运算为准。
+    """
+    import torch
+
+    if not torch.cuda.is_available():
+        return False, "CUDA 不可用"
+    try:
+        probe = torch.randn(128, 128, device="cuda", dtype=torch.bfloat16)
+        (probe @ probe.mT).float().sum().item()
+        return True, torch.cuda.get_device_name(0)
+    except Exception as exc:
+        text = str(exc) or type(exc).__name__
+        return False, text.splitlines()[0]
+
+
 def describe_environment(models_root: Path, device: str) -> dict:
     info: dict = {"models_root": str(models_root), "python": sys.version.split()[0]}
     try:
@@ -71,6 +93,10 @@ def describe_environment(models_root: Path, device: str) -> dict:
             info["vram_total_mib"] = round(torch.cuda.get_device_properties(0).total_memory / 1024**2)
         info["device"] = "cuda" if (device == "auto" and torch.cuda.is_available()) else (
             "cpu" if device == "auto" else device)
+        works, detail = cuda_kernel_probe()
+        info["cuda_works"] = works
+        if not works:
+            info["cuda_note"] = detail
     except Exception as exc:  # torch 没装好时也要能报出来
         info["torch_error"] = str(exc)
 
@@ -154,6 +180,17 @@ def transcribe(args: argparse.Namespace) -> int:
     dtype_name = args.dtype
     if dtype_name == "auto":
         dtype_name = "bf16" if device == "cuda" else "fp32"
+
+    if device == "cuda":
+        works, detail = cuda_kernel_probe()
+        if not works:
+            # 已装的 torch 没有这张卡的内核（如 RTX 50 系 + cu126 版）。
+            # 趁早降级 CPU，总比在模型加载到一半时炸掉强。
+            emit(f"注意：当前 PyTorch 与显卡不兼容（{detail}），本次改用 CPU 转谱，"
+                 "速度会慢很多。重装附加组件（删除后重装点「音频转谱」）可自动换装匹配的版本。")
+            device = "cpu"
+            if args.dtype == "auto":
+                dtype_name = "fp32"
 
     note(6, "加载模型（首次约 10 秒）")
     started = time.monotonic()

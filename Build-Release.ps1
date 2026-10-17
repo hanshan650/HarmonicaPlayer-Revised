@@ -10,7 +10,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Windows UI tests failed. Publishing cancelled.' }
 
     $product = 'HarmonicaPlayer-Revised'
-    $version = '1.3'
+    $version = '1.4.1'
     $buildStamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
     $outputDir = Join-Path $PSScriptRoot "bin\Release\publish-$version-$buildStamp"
     dotnet publish .\HarmonicaPlayer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $outputDir
